@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="manifest" href="manifest.json" />
+
+    <style>
+        #url {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <p>This is the index.html</p>
+    <form>
+        <input type="text" id="url" value="https://www.youtu.be/DxBGCyLWTEw"/><br/>
+        <input type="button" id="go" value="Go!"/>
+    </form>
+
+    <script>
+        // Define a function named ascii_to_hexa that takes a string parameter str
+        function ascii_to_hexa(str)
+        {
+            // Initialize an empty array to store the hexadecimal values
+            var arr1 = [];
+            // Iterate through each character in the input string
+            for (var n = 0, l = str.length; n < l; n++)
+            {
+                // Convert the ASCII value of the current character to its hexadecimal representation
+                var hex = str.charCodeAt(n).toString(16).padStart(2, '0');
+                // Push the hexadecimal value to the array
+                arr1.push(hex);
+            }
+            // Join the hexadecimal values in the array to form a single string
+            return arr1.join('');
+        }
+
+        function parseUrl(url) {
+            let youtube = "https://www.youtu.be/";
+            if (url.startsWith(youtube)) {
+                let id = /(https?:\/\/(www\.)?)?youtu\.be\/(?<id>.*)/g.exec(url).groups.id
+                window.location.replace(window.location.origin + "/youtube/" + id);
+            }
+        }
+
+        document.getElementById("go").addEventListener("click", () => {
+            parseUrl(document.getElementById("url").value);
+        });
+    </script>
+</body>
+</html>

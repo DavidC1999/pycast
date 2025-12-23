@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Watching your amazing video
+
+    <input type="button" value="Go back" id="goback"/>
+
+    <input type="button" value="Play/Pauze" id="toggleplay"/>
+
+    <script>
+        document.getElementById("goback").onclick = () => {
+            window.location.replace(window.location.origin);
+        }
+
+        document.getElementById("toggleplay").onclick = () => {
+            window.location.replace(window.location.origin + "/youtube/toggleplay");
+        }
+    </script>
+</body>
+</html>
