@@ -1,0 +1,26 @@
+{
+  "name": "PyCast app",
+  "short_name": "PyCastApp",
+  "description": "PWA for the PyCast",
+  "scope": "/pycast",
+  "start_url": "/pycast",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "display": "standalone",
+  "icons": [
+      {
+          "src": "/pycast/icon512.png",
+          "type": "image/png",
+          "sizes": "512x512"
+      }
+  ],
+  "share_target": {
+    "action": "/share-handler.html",
+    "method": "GET",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "url": "link"
+    }
+  }
+}
