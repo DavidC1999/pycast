@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Shared link:</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>Full</td>
+                <td id="full"></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td id="name"></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td id="description"></td>
+            </tr>
+            <tr>
+                <td>Link</td>
+                <td id="link"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const url = new URL(document.location);
+        const name = url.searchParams.get("name");
+        const description = url.searchParams.get("description");
+        const sharedLink = url.searchParams.get("link");
+
+        document.getElementById("full").innerHTML = url.toString();
+        document.getElementById("name").innerHTML = name;
+        document.getElementById("description").innerHTML = description;
+        document.getElementById("link").innerHTML = sharedLink;
+    </script>
+</body>
+</html>
