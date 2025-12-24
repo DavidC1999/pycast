@@ -1,0 +1,17 @@
+{
+  "name": "PyCast app",
+  "short_name": "PyCastApp",
+  "description": "PWA for the PyCast",
+  "scope": "/pycast/pwa",
+  "start_url": "/pycast/pwa",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "display": "standalone",
+  "icons": [
+      {
+          "src": "/pycast/pwa/icon512.png",
+          "type": "image/png",
+          "sizes": "512x512"
+      }
+  ]
+}
