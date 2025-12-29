@@ -82,7 +82,11 @@
 
             document.getElementById("appView").style.display = "block";
 
-            const storedHostname = window.localStorage.getItem(hostnameKey);
+            let storedHostname = window.localStorage.getItem(hostnameKey);
+
+            if (storedHostname == null) {
+                storedHostname = ""
+            }
 
             if (storedHostname.includes(":"))
             {
@@ -102,15 +106,13 @@
             })
         }
 
-        installed();
-
-        // if (window.matchMedia('(display-mode: standalone)').matches) {  
-        //     installed();
-        // }
-        // else
-        // {
-        //     notInstalled();
-        // }
+        if (window.matchMedia('(display-mode: standalone)').matches) {  
+            installed();
+        }
+        else
+        {
+            notInstalled();
+        }
         </script>
 </body>
 </html>

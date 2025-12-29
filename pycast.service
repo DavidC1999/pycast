@@ -1,0 +1,13 @@
+[Unit]
+Description=PyCast service
+After=network.target
+
+[Service]
+Type=simple
+User=david
+Group=david
+ExecStart=/home/david/Documents/programming/pycast/.venv/bin/python3 /home/david/Documents/programming/pycast/main.py
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target
