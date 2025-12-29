@@ -1,6 +1,6 @@
-from flask import Flask, Response, render_template
+from flask import Flask, render_template
 
-import webbrowser
+import subprocess
 
 import x11 as platformspecific
 
@@ -14,8 +14,8 @@ def index():
 def launch_youtube(id=None):
     if id is None:
         return "<p>No ID given</p>"
-    
-    webbrowser.open_new(f"https://www.youtube.com/watch?v={id}")
+
+    subprocess.Popen(["firefox", "-P", "pycast", f"https://www.youtube.com/watch?v={id}"])
     platformspecific.focus_browser()
     return render_template("youtube.html")
 
