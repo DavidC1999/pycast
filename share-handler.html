@@ -25,6 +25,10 @@
                 <td>Link</td>
                 <td id="link"></td>
             </tr>
+            <tr>
+                <td>Stored hostname</td>
+                <td id="hostname"></td>
+            </tr>
         </tbody>
     </table>
 
@@ -34,10 +38,13 @@
         const description = url.searchParams.get("description");
         const sharedLink = url.searchParams.get("link");
 
+        const hostnameKey = "hostname"
+
         document.getElementById("full").innerHTML = url.toString();
         document.getElementById("name").innerHTML = name;
         document.getElementById("description").innerHTML = description;
         document.getElementById("link").innerHTML = sharedLink;
+        document.getElementById("hostname").innerHTML = window.localStorage.getItem(hostnameKey);
     </script>
 </body>
 </html>
