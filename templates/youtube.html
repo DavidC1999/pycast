@@ -3,28 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>YouTube controls</title>
     <style>
-        input {
+        .container {
+            display: flex;
+            flex-direction: column;
+
+            width: min(90vw, 800px);
+            height: min(100vh, 800px);
+            margin: auto;
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            flex-grow: 1;
+        }
+
+        .top > * {
+            height: min(100%, 50px);
+        }
+
+        .main {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+            flex-grow: 5;
+
             width: 100%;
-            height: 300px;
+        }
+
+        #toggleplay {
+            width: clamp(100px, 50%, 300px);
+            height: clamp(100px, 50%, 300px);
+        }
+
+        .minor {
+            height: clamp(100px, 10%, 300px);
+            width: 10%
+        }
+
+        #close {
+            width: 20%;
+            color: red;
+            font-weight: bold;
+        }
+
+        #jump {
+            width: 100%;
+            visibility: hidden;
+        }
+
+        input[type=button] {
+            background: white;
+            border: 1px black solid;
         }
     </style>
 </head>
 <body>
-    Watching your amazing video
+    <div class="container">
+        <div class="top">
+            <input type="button" value="Fullscreen" id="fullscreen" class="simple-action" simple-action="fullscreen"/>
+            <input type="button" value="X" id="close"/>
+        </div>
 
-    <input type="button" value="Go back" id="goback"/><br/>
+        <div class="main">
+            <input type="button" value="<<" id="bback" class="simple-action minor" simple-action="bback"/>
+            <input type="button" value="<" id="back" class="simple-action minor" simple-action="back"/>
+            <input type="button" value="▶/⏸" id="toggleplay" class="simple-action" simple-action="toggleplay"/>
+            <input type="button" value=">" id="forward" class="simple-action minor" simple-action="forward"/>
+            <input type="button" value=">>" id="fforward" class="simple-action minor" simple-action="fforward"/>
+        </div>
 
-    <input type="button" value="Play/Pauze" id="toggleplay"/><br/>
+        <div class="bottom">
+            <input type="button" value="Jump to timestamp" id="jump"/>
+        </div>
+    </div>
 
     <script>
-        document.getElementById("goback").onclick = () => {
-            window.location.replace(window.location.origin + "/youtube/close");
+        function go(thing)
+        {
+            window.location.replace(window.location.origin + "/youtube/action/" + thing);
         }
 
-        document.getElementById("toggleplay").onclick = () => {
-            window.location.replace(window.location.origin + "/youtube/toggleplay");
+        document.getElementById("close").onclick = () => {
+            window.location.replace(window.location.origin + "/close");
+        }
+
+        // document.getElementById("toggleplay").onclick = () => go("toggleplay");
+
+        const simpleActions = document.getElementsByClassName("simple-action");
+        for (const elem of simpleActions) {
+            elem.addEventListener("click", () => {
+                const action = elem.getAttribute("simple-action");
+                go(action);
+            });
         }
     </script>
 </body>

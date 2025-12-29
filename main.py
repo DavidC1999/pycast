@@ -19,13 +19,25 @@ def launch_youtube(id=None):
     platformspecific.focus_browser()
     return render_template("youtube.html")
 
-@app.route("/youtube/toggleplay")
-def toggle_play(id=None):
-    platformspecific.keypress("k")
+@app.route("/youtube/action/<action>")
+def youtube_simple_action(action=None):
+    if action == "toggleplay":
+        platformspecific.keypress("k")
+    elif action == "fullscreen":
+        platformspecific.keypress("f")
+    elif action == "bback":
+        platformspecific.keypress("j")
+    elif action == "back":
+        platformspecific.keypress("Left")
+    elif action == "fforward":
+        platformspecific.keypress("l")
+    elif action == "forward":
+        platformspecific.keypress("Right")
+
     return render_template("youtube.html")
 
-@app.route("/youtube/close")
-def toggle_close(id=None):
+@app.route("/close")
+def close():
     platformspecific.keypress("ctrl+w")
     return render_template("index.html")
 
