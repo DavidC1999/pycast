@@ -20,10 +20,12 @@
             justify-content: space-between;
 
             flex-grow: 1;
+            gap: 50px;
         }
 
         .top > * {
             height: min(100%, 50px);
+            flex-grow: 1;
         }
 
         .main {
@@ -47,7 +49,6 @@
         }
 
         #close {
-            width: 20%;
             color: red;
             font-weight: bold;
         }
@@ -66,7 +67,8 @@
 <body>
     <div class="container">
         <div class="top">
-            <input type="button" value="Fullscreen" id="fullscreen" class="simple-action" simple-action="fullscreen"/>
+            <input type="button" value="Fullscreen" class="simple-action" simple-action="fullscreen"/>
+            <input type="button" value="Refresh" class="simple-action" simple-action="refresh"/>
             <input type="button" value="X" id="close"/>
         </div>
 

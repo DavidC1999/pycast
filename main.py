@@ -33,6 +33,8 @@ def youtube_simple_action(action=None):
         platformspecific.keypress("l")
     elif action == "forward":
         platformspecific.keypress("Right")
+    elif action == "refresh":
+        platformspecific.keypress("F5")
 
     return render_template("youtube.html")
 
