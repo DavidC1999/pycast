@@ -34,17 +34,41 @@
 
     <script>
         const url = new URL(document.location);
-        const name = url.searchParams.get("name");
-        const description = url.searchParams.get("description");
+        const sharedName = url.searchParams.get("name");
+        const sharedDescription = url.searchParams.get("description");
         const sharedLink = url.searchParams.get("link");
 
         const hostnameKey = "hostname"
+        const hostname = window.localStorage.getItem(hostnameKey);
 
         document.getElementById("full").innerHTML = url.toString();
-        document.getElementById("name").innerHTML = name;
-        document.getElementById("description").innerHTML = description;
+        document.getElementById("name").innerHTML = sharedName;
+        document.getElementById("description").innerHTML = sharedDescription;
         document.getElementById("link").innerHTML = sharedLink;
-        document.getElementById("hostname").innerHTML = window.localStorage.getItem(hostnameKey);
+        document.getElementById("hostname").innerHTML = hostname;
+
+        if (hostname) {
+            let newUrl = "http://" + hostname + "/"
+            
+            let paramSign = "?";
+
+            if (sharedName) {
+                newUrl += paramSign + "name=" + sharedName
+                paramSign = "&";
+            }
+            if (sharedDescription) {
+                newUrl += paramSign + "description=" + sharedDescription
+                paramSign = "&";
+            }
+            if (sharedLink) {
+                newUrl += paramSign + "name=" + sharedLink
+                paramSign = "&";
+            }
+
+            if (paramSign != "?") {
+                window.location.replace(newUrl)
+            }
+        }
     </script>
 </body>
 </html>
