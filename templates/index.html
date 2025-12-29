@@ -7,13 +7,27 @@
     <link rel="manifest" href="manifest.json" />
 
     <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+        }
+
         #url {
             width: 100%;
+            height: 5em;
+        }
+
+        #go {
+            margin-top: 30px;
+            width: 100%;
+            height: 3em;
+            background: white;
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
-    <p>This is the index.html</p>
+    <h1>PyCast</h1>
     <form>
         <input type="text" id="url" value="https://www.youtu.be/DxBGCyLWTEw"/><br/>
         <input type="button" id="go" value="Go!"/>
