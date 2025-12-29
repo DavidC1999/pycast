@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        input {
+            width: 100%;
+            height: 300px;
+        }
+    </style>
 </head>
 <body>
     Watching your amazing video
 
-    <input type="button" value="Go back" id="goback"/>
+    <input type="button" value="Go back" id="goback"/><br/>
 
-    <input type="button" value="Play/Pauze" id="toggleplay"/>
+    <input type="button" value="Play/Pauze" id="toggleplay"/><br/>
 
     <script>
         document.getElementById("goback").onclick = () => {
-            window.location.replace(window.location.origin);
+            window.location.replace(window.location.origin + "/youtube/close");
         }
 
         document.getElementById("toggleplay").onclick = () => {

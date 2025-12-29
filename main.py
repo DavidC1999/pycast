@@ -24,5 +24,10 @@ def toggle_play(id=None):
     platformspecific.keypress("k")
     return render_template("youtube.html")
 
+@app.route("/youtube/close")
+def toggle_close(id=None):
+    platformspecific.keypress("ctrl+w")
+    return render_template("index.html")
+
 if __name__ == "__main__":
-    app.run(host="192.168.1.201", port=8080)
+    app.run(host="0.0.0.0", port=8080)
