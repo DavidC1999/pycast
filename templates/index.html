@@ -20,34 +20,39 @@
     </form>
 
     <script>
-        // Define a function named ascii_to_hexa that takes a string parameter str
-        function ascii_to_hexa(str)
-        {
-            // Initialize an empty array to store the hexadecimal values
-            var arr1 = [];
-            // Iterate through each character in the input string
-            for (var n = 0, l = str.length; n < l; n++)
-            {
-                // Convert the ASCII value of the current character to its hexadecimal representation
-                var hex = str.charCodeAt(n).toString(16).padStart(2, '0');
-                // Push the hexadecimal value to the array
-                arr1.push(hex);
+        function tryParse(url) {
+            if (url == null) {
+                return;
             }
-            // Join the hexadecimal values in the array to form a single string
-            return arr1.join('');
-        }
 
-        function parseUrl(url) {
-            let youtube = "https://www.youtu.be/";
-            if (url.startsWith(youtube)) {
-                let id = /(https?:\/\/(www\.)?)?youtu\.be\/(?<id>.*)/g.exec(url).groups.id
+            let youtubeShortMatch = url.match(/(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+)/);
+            if (youtubeShortMatch) {
+                let id = youtubeShortMatch.groups.id
+
+                window.location.replace(window.location.origin + "/youtube/" + id);
+            }
+
+            let youtubeMatch = url.match(/(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+)/);
+            if (youtubeMatch) {
+                let id = youtubeMatch.groups.id
+
                 window.location.replace(window.location.origin + "/youtube/" + id);
             }
         }
 
         document.getElementById("go").addEventListener("click", () => {
-            parseUrl(document.getElementById("url").value);
+            tryParse(document.getElementById("url").value);
         });
+
+        const url = new URL(document.location);
+        const shareName = url.searchParams.get("name");
+        const shareDescription = url.searchParams.get("description");
+        const shareLink = url.searchParams.get("link");
+
+        const checkUrls = [shareLink, shareDescription, shareName]
+        for (urlToCheck of checkUrls) {
+            tryParse(urlToCheck);
+        }
     </script>
 </body>
 </html>
