@@ -1,0 +1,16 @@
+[Unit]
+Description=PyCast service
+
+[Service]
+Type=simple
+User=@user@
+Group=@user@
+SupplementaryGroups=audio
+Environment=DISPLAY=:0
+Environment=PULSE_SERVER=unix:/run/user/@userid@/pulse/native
+Environment=XDG_RUNTIME_DIR=/run/user/@userid@
+ExecStart=@basedir@/.venv/bin/python3 @basedir@/main.py
+Restart=on-failure
+
+[Install]
+WantedBy=graphical.target

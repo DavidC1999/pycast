@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+BASE_DIR=$(dirname $(realpath $BASH_SOURCE))
+
 if ! command -v dpkg >/dev/null 2>&1
 then
     echo "This script only works on debian with dpkg"
@@ -9,12 +11,6 @@ fi
 if ! command -v apt >/dev/null 2>&1
 then
     echo "This script only works on debian with apt"
-    exit 1
-fi
-
-if ! command -v systemctl >/dev/null 2>&1
-then
-    echo "This script only works with systemctl"
     exit 1
 fi
 
@@ -76,10 +72,17 @@ case $yn in
     * ) exit 0;;
 esac
 
+if ! command -v systemctl >/dev/null 2>&1
+then
+    echo "Running PyCast as a daemon only works with systemd as the init system"
+    exit 1
+fi
+
 echo Creating service file locally...
-sed -e "s|@startcmd@|$(pwd)/.venv/bin/python3 $(pwd)/main.py|g" \
+sed -e "s|@basedir@|$BASE_DIR|g" \
     -e "s|@user@|$USER|g"\
-    pycast.service.sample > pycast.service
+    -e "s|@userid@|$(id -u)|g"\
+    pycast.service.template > pycast.service
 
 link_dir=/etc/systemd/system
 link_name=pycast.service
