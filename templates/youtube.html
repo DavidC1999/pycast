@@ -20,7 +20,7 @@
             justify-content: space-between;
 
             flex-grow: 1;
-            gap: 50px;
+            gap: 30px;
         }
 
         .top > * {
@@ -60,6 +60,7 @@
         #select-jump {
             width: 100%;
             height: min(100%, 50px);
+            font-size: 30px;
         }
 
         input[type=button] {
@@ -74,10 +75,11 @@
             width: 100vw;
             height: 100vh;
 
+            display: flex;
             display: none;
             justify-content: center;
             align-items: center;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         #close-popup {
@@ -88,12 +90,16 @@
 
         #time-picker {
             display: flex;
-            justify-content: space-evenly;
-            gap: 10px;
+            justify-content: center;
+        }
+
+        #time-picker span {
+            width: 30%;
+            text-align: center;
         }
 
         #time-picker input {
-            width: 30%;
+            width: 50%;
         }
 
         #time-picker #jump {
@@ -104,30 +110,30 @@
 <body>
     <div class="container">
         <div class="top">
-            <input type="button" value="Fullscreen" class="simple-action" simple-action="fullscreen"/>
-            <input type="button" value="Refresh" class="simple-action" simple-action="refresh"/>
+            <input type="button" value="⛶" class="simple-action" simple-action="fullscreen"/>
+            <input type="button" value="↻" class="simple-action" simple-action="refresh"/>
+            <input type="button" value="CC" class="simple-action" simple-action="captions"/>
             <input type="button" value="X" id="close"/>
         </div>
 
         <div class="main">
             <input type="button" value="<<" id="bback" class="simple-action minor" simple-action="bback"/>
             <input type="button" value="<" id="back" class="simple-action minor" simple-action="back"/>
-            <input type="button" value="▶/⏸" id="toggleplay" class="simple-action" simple-action="toggleplay"/>
+            <input type="button" value="⏯" id="toggleplay" class="simple-action" simple-action="toggleplay"/>
             <input type="button" value=">" id="forward" class="simple-action minor" simple-action="forward"/>
             <input type="button" value=">>" id="fforward" class="simple-action minor" simple-action="fforward"/>
         </div>
 
         <div class="bottom">
-            <input type="button" value="Jump to timestamp" id="select-jump"/>
+            <input type="button" value="↷" id="select-jump"/>
         </div>
     </div>
 
     <div id="popup-container">
         <input type="button" value="X" id="close-popup">
         <div id="time-picker">
-            <input type="number" id="jump-minutes" class="auto-select" value="0">
-            m
-            <input type="number" id="jump-seconds" class="auto-select" value="0">s
+            <span><input type="number" id="jump-minutes" class="auto-select" value="0"> m</span>
+            <span><input type="number" id="jump-seconds" class="auto-select" value="0"> s</span>
             <input type="button" value=">" id="jump">
         </div>
     </div>

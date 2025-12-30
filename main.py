@@ -46,6 +46,8 @@ def route_youtube_simple_action(id=None, action=None):
         platformspecific.keypress("Right")
     elif action == "refresh":
         platformspecific.keypress("F5")
+    elif action == "captions":
+        platformspecific.keypress("c")
     elif action == "jump":
         close_tab()
         minutes = request.args.get('m')
