@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/pycast/manifest.webmanifest" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <title>PyCast</title>
 
     <style>
@@ -40,19 +40,18 @@
         <h1>PyCast</h1>
         <input type="button" value="Install!" id="installApp"/>
     </div>
-    <div id="appView" style="display: none;">
-        <h1>PyCast</h1>
-        Hostname:<br/>
-        <input type="text" id="hostnameInput"/><br/>
-        Port:<br/>
-        <input type="text" id="portInput"/><br/>
-        <input type="button" id="saveHostname" value="Save">
-    </div>
     <script>
-        let deferredPrompt;
+        const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
 
-        function notInstalled()
+        if (window.matchMedia('(display-mode: standalone)').matches) {  
+            // Installed, go to the app
+            window.location.replace(baseUrl + "/app.html");
+        }
+        else
         {
+            // Not yet installed, show the install button in the browser
+            let deferredPrompt = null;
+            
             document.getElementById("installView").style.display = "block";
 
             window.addEventListener('beforeinstallprompt', (e) => {
@@ -70,48 +69,6 @@
                     }
                 }
             });
-        }
-
-        function installed()
-        {
-            const hostnameInput = document.getElementById("hostnameInput");
-            const portInput = document.getElementById("portInput");
-            const saveHostnameButton = document.getElementById("saveHostname");
-            const hostnameKey = "hostname";
-            const defaultPort = 8080;
-
-            document.getElementById("appView").style.display = "block";
-
-            let storedHostname = window.localStorage.getItem(hostnameKey);
-
-            if (storedHostname == null) {
-                storedHostname = ""
-            }
-
-            if (storedHostname.includes(":"))
-            {
-                const split = storedHostname.split(":");
-                hostnameInput.value = split[0];
-                portInput.value = split[1];
-            }
-            else
-            {
-                hostnameInput.value = storedHostname;
-                portInput.value = defaultPort;
-            }
-
-
-            saveHostnameButton.addEventListener("click", () => {
-                window.localStorage.setItem(hostnameKey, hostnameInput.value + ":" + portInput.value);
-            })
-        }
-
-        if (window.matchMedia('(display-mode: standalone)').matches) {  
-            installed();
-        }
-        else
-        {
-            notInstalled();
         }
         </script>
 </body>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.test.webmanifest" />
+    <title>PyCast</title>
+
+    <style> 
+        body {
+            font-family: sans-serif;
+        }
+
+        input[type=button] {
+            background: white;
+            border: 1px black solid;
+        }
+
+        input[type=button]:active {
+            background: lightgray;
+        }
+
+        .container {
+            width: min(90vw, 800px);
+            margin: 0 auto;
+        }
+
+        .header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #toggleSettings {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            right: 20px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .formSubmit {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PyCast</h1>
+            <input type="button" id="toggleSettings" value="⚙">
+        </div>
+        <div class="main">
+            <div id="hostnameForm" class="form">
+                <label>Hostname:</label>
+                <input type="text" id="hostnameInput"/>
+                <label>Port:</label>
+                <input type="text" id="portInput"/><br/>
+                <input type="button" id="saveHostname" class="formSubmit" value="Save">
+            </div>
+            <div id="shareForm" class="form">
+                <label>Share link:</label>
+                <input type="text" id="shareLinkInput"/>
+                <input type="button" id="share" class="formSubmit" value="Go!"/>
+            </div>
+        </div>
+    </div>
+    <script>
+        const hostnameInput = document.getElementById("hostnameInput");
+        const portInput = document.getElementById("portInput");
+        const shareLinkInput = document.getElementById("shareLinkInput");
+        const saveHostnameButton = document.getElementById("saveHostname");
+        const shareButton = document.getElementById("share");
+        const toggleSettingsButton = document.getElementById("toggleSettings");
+        const hostnameForm = document.getElementById("hostnameForm");
+        const shareForm = document.getElementById("shareForm");
+
+        const hostnameKey = "hostname";
+        const defaultPort = 8080;
+
+        const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
+
+        let settingsOpen = false;
+
+        let storedHostname = window.localStorage.getItem(hostnameKey);
+
+        function applySettingsOpen()
+        {
+            if (settingsOpen) {
+                hostnameForm.style.display = "flex";
+                shareForm.style.display = "none";
+            } else {
+                hostnameForm.style.display = "none";
+                shareForm.style.display = "flex";
+            }
+        }
+
+        saveHostnameButton.addEventListener("click", () => {
+            window.localStorage.setItem(hostnameKey, hostnameInput.value + ":" + portInput.value);
+        });
+
+        toggleSettingsButton.addEventListener("click", () => {
+            settingsOpen = !settingsOpen;
+            applySettingsOpen();
+        });
+
+        shareButton.addEventListener("click", () => {
+            window.location.replace(baseUrl + "/share-handler.html?link=" + shareLinkInput.value);
+        });
+
+        function main() {
+            if (storedHostname == null) {
+                storedHostname = "";
+            }
+
+            if (storedHostname.includes(":"))
+            {
+                const split = storedHostname.split(":");
+                hostnameInput.value = split[0];
+                portInput.value = split[1];
+            }
+            else
+            {
+                hostnameInput.value = storedHostname;
+                portInput.value = defaultPort;
+            }
+
+            applySettingsOpen();
+        }
+
+        main();
+    </script>
+</body>
+</html>
