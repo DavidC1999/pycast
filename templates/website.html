@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube controls</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+
+            width: min(90vw, 800px);
+            height: min(100vh, 800px);
+            margin: auto;
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            justify-content: end;
+
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        .top > * {
+            height: min(100%, 50px);
+        }
+
+        .main {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+            flex-grow: 5;
+
+            width: 100%;
+        }
+
+        #close {
+            color: red;
+            font-weight: bold;
+            width: 50px;
+        }
+
+        input[type=button] {
+            background: white;
+            border: 1px black solid;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top">
+            <input type="button" value="X" id="close"/>
+        </div>
+        <div class="main">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("close").onclick = () => {
+            window.location.replace(window.location.origin + "/close");
+        }
+    </script>
+</body>
+</html>

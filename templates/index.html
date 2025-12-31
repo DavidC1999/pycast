@@ -3,37 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="manifest.test.webmanifest" />
+    <title>PyCast</title>
 
-    <style>
+    <style> 
         body {
             font-family: sans-serif;
-            text-align: center;
         }
 
-        #url {
-            width: 100%;
-            height: 5em;
-        }
-
-        #go {
-            margin-top: 30px;
-            width: 100%;
-            height: 3em;
+        input[type=button] {
             background: white;
-            border: 1px solid black;
+            border: 1px black solid;
+        }
+
+        input[type=button]:active {
+            background: lightgray;
+        }
+
+        .container {
+            width: min(90vw, 800px);
+            margin: 0 auto;
+        }
+
+        .header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .formSubmit {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>PyCast</h1>
-    <form>
-        <input type="text" id="url" value="https://www.youtu.be/DxBGCyLWTEw"/><br/>
-        <input type="button" id="go" value="Go!"/>
-    </form>
-
+    <div class="container">
+        <div class="header">
+            <h1>PyCast</h1>
+        </div>
+        <div class="main">
+            <div id="shareForm" class="form">
+                <label>Share link:</label>
+                <input type="url" id="shareLinkInput"/>
+                <input type="button" id="share" class="formSubmit" value="Go!"/>
+            </div>
+        </div>
+    </div>
     <script>
+        const shareLinkInput = document.getElementById("shareLinkInput");
+        const shareButton = document.getElementById("share");
+        const shareForm = document.getElementById("shareForm");
+
+        const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
+
         function tryParse(url) {
             if (url == null) {
                 return;
@@ -44,6 +72,7 @@
                 let id = youtubeShortMatch.groups.id
 
                 window.location.replace(window.location.origin + "/youtube/" + id);
+                return;
             }
 
             let youtubeMatch = url.match(/(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+)/);
@@ -51,11 +80,14 @@
                 let id = youtubeMatch.groups.id
 
                 window.location.replace(window.location.origin + "/youtube/" + id);
+                return;
             }
+
+            window.location.replace(window.location.origin + "/website/" + url);
         }
 
-        document.getElementById("go").addEventListener("click", () => {
-            tryParse(document.getElementById("url").value);
+        shareButton.addEventListener("click", () => {
+            tryParse(shareLinkInput.value);
         });
 
         const url = new URL(document.location);

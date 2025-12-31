@@ -13,14 +13,25 @@ def index():
 def close_tab():
     platformspecific.keypress("ctrl+w")
 
+def launch_website(url):
+    subprocess.Popen(["firefox", "-P", "pycast", url])
+    platformspecific.focus_browser()
+
 def launch_youtube(id=None, time=None):
     url = f"https://www.youtube.com/watch?v={id}"
 
     if time:
         url += "&t=" + time
+    
+    launch_website(url)
 
-    subprocess.Popen(["firefox", "-P", "pycast", url])
-    platformspecific.focus_browser()
+@app.route("/website/<path:url>")
+def route_launch_website(url=None):
+    if url is None:
+        return "<p>No URL given</p>"
+    
+    launch_website(url)
+    return render_template("website.html")
 
 @app.route("/youtube/<id>")
 def route_launch_youtube(id=None):
