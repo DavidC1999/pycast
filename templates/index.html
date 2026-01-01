@@ -38,7 +38,7 @@
             gap: 10px;
         }
 
-        .form {
+        #shareForm {
             display: flex;
             flex-direction: column;
         }
@@ -64,8 +64,8 @@
             <h1>PyCast</h1>
         </div>
         <div class="main">
+            <h2>Open link:</h2>
             <div id="shareForm" class="form">
-                <label>Share link:</label>
                 <input type="url" id="shareLinkInput"/>
                 <input type="button" id="share" class="formSubmit" value="Go!"/>
             </div>
@@ -73,6 +73,14 @@
             <div class="controlLinks">
                 <button id="youtubeControl"><img src="./asset/yt.png" alt="YouTube"></button>
                 <button id="internetControl"><img src="./asset/internet.png" alt="Internet"></button>
+            </div>
+            <h2>Firefox profile:</h2>
+            <div class="profileForm">
+                <select name="firefoxProfile" id="firefoxProfileSelect">
+                    {% for item in profiles %}
+                        <option value="{{item}}">{{item}}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
     </div>
@@ -82,8 +90,20 @@
         const shareForm = document.getElementById("shareForm");
         const youtubeControlLink = document.getElementById("youtubeControl");
         const internetControlLink = document.getElementById("internetControl");
+        const firefoxProfileSelect = document.getElementById("firefoxProfileSelect");
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
+
+        const profileLocalStorageKey = "profile";
+
+        function go(url) {
+            const profile = window.localStorage.getItem(profileLocalStorageKey);
+
+            if (profile !== undefined && profile !== null) {
+                url += "?profile=" + profile;
+            }
+            window.location.replace(url);
+        }
 
         function tryParse(text) {
             if (text == null) {
@@ -94,7 +114,7 @@
             if (youtubeShortMatch) {
                 let id = youtubeShortMatch.groups.id
 
-                window.location.replace(window.location.origin + "/youtube/" + id);
+                go(window.location.origin + "/youtube/" + id);
                 return true;
             }
 
@@ -102,13 +122,13 @@
             if (youtubeMatch) {
                 let id = youtubeMatch.groups.id
 
-                window.location.replace(window.location.origin + "/youtube/" + id);
+                go(window.location.origin + "/youtube/" + id);
                 return true;
             }
 
             let urlMatch = text.match(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/);
             if (urlMatch) {
-                window.location.replace(window.location.origin + "/website/" + text);
+                go(window.location.origin + "/website/" + text);
                 return true;
             }
 
@@ -120,11 +140,15 @@
         });
 
         youtubeControlLink.addEventListener("click", () => {
-            window.location.replace(window.location.origin + "/youtube")
+            go(window.location.origin + "/youtube")
         });
 
         internetControlLink.addEventListener("click", () => {
-            window.location.replace(window.location.origin + "/website")
+            go(window.location.origin + "/website")
+        });
+
+        firefoxProfileSelect.addEventListener("change", () => {
+            window.localStorage.setItem(profileLocalStorageKey, firefoxProfileSelect.value)
         });
 
         const url = new URL(document.location);
@@ -137,6 +161,12 @@
             if (tryParse(urlToCheck)) {
                 break;
             }
+        }
+
+        const profile = window.localStorage.getItem(profileLocalStorageKey);
+
+        if (profile !== undefined && profile !== null) {
+            firefoxProfileSelect.value = window.localStorage.getItem(profileLocalStorageKey);
         }
     </script>
 </body>

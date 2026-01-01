@@ -1,20 +1,32 @@
 from flask import Flask, render_template, current_app, request
 
-import subprocess, os.path
+import subprocess
+import os
+import os.path
 
 import x11 as platformspecific
 
 app = Flask(__name__)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+PROFILES_DIR = f"{SCRIPT_DIR}/firefox_profiles"
+DEFAULT_PROFILE_NAME = "pycast"
+DEFAULT_PROFILE = f"{PROFILES_DIR}/{DEFAULT_PROFILE_NAME}"
+
+def create_firefox_profile(profile_name):
+    profile_dir = f"{PROFILES_DIR}/{profile_name}"
+    subprocess.Popen(["firefox", "-CreateProfile", f"{profile_name} {profile_dir}"])
+
+def get_profiles():
+    return [a for a in os.listdir(PROFILES_DIR) if os.path.isdir(f"{PROFILES_DIR}/{a}")]
 
 def close_tab():
     platformspecific.keypress("ctrl+w")
 
 def launch_website(url):
-    subprocess.Popen(["firefox", "-P", "pycast", url])
+    profile = request.args.get("profile") if "profile" in request.args else DEFAULT_PROFILE_NAME
+    
+    subprocess.Popen(["firefox", "-P", profile, url])
     platformspecific.focus_browser()
 
 def launch_youtube(id=None, time=None):
@@ -24,6 +36,13 @@ def launch_youtube(id=None, time=None):
         url += "&t=" + time
     
     launch_website(url)
+
+def render_index():
+    return render_template("index.html", profiles=get_profiles())
+
+@app.route("/")
+def index():
+    return render_index()
 
 @app.route("/website")
 @app.route("/website/<path:url>")
@@ -72,14 +91,21 @@ def route_youtube_action(action=None, id=None):
 @app.route("/close")
 def route_close():
     close_tab()
-    return render_template("index.html")
+    return render_index()
 
 @app.route("/asset/<asset>")
 def route_asset(asset=None):
-    BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-    if os.path.exists(f"{BASE_DIR}/static/{asset}"):
+    if os.path.exists(f"{SCRIPT_DIR}/static/{asset}"):
         return current_app.send_static_file(asset)
     return current_app.send_static_file("notfound.png")
 
+@app.route("/create_profile/<name>")
+def route_create_profile(name=None):
+    create_firefox_profile(f"pycast-{name}")
+    return render_index()
+
 if __name__ == "__main__":
+    if not os.path.exists(DEFAULT_PROFILE):
+        create_firefox_profile(DEFAULT_PROFILE_NAME)
+    
     app.run(host="0.0.0.0", port=8080)
