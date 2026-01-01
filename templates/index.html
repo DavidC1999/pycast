@@ -11,12 +11,12 @@
             font-family: sans-serif;
         }
 
-        input[type=button] {
+        input[type=button], button {
             background: white;
             border: 1px black solid;
         }
 
-        input[type=button]:active {
+        input[type=button]:active, button:active {
             background: lightgray;
         }
 
@@ -32,6 +32,12 @@
             justify-content: center;
         }
 
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .form {
             display: flex;
             flex-direction: column;
@@ -39,6 +45,16 @@
 
         .formSubmit {
             margin-top: 10px;
+        }
+
+        .controlLinks {
+            display: flex;
+            gap: 10px;
+        }
+
+        .controlLinks button img {
+            width: 50px;
+            height: 50px;
         }
     </style>
 </head>
@@ -53,12 +69,19 @@
                 <input type="url" id="shareLinkInput"/>
                 <input type="button" id="share" class="formSubmit" value="Go!"/>
             </div>
+            <h2>Jump to control:</h2>
+            <div class="controlLinks">
+                <button id="youtubeControl"><img src="./asset/yt.png" alt="YouTube"></button>
+                <button id="internetControl"><img src="./asset/internet.png" alt="Internet"></button>
+            </div>
         </div>
     </div>
     <script>
         const shareLinkInput = document.getElementById("shareLinkInput");
         const shareButton = document.getElementById("share");
         const shareForm = document.getElementById("shareForm");
+        const youtubeControlLink = document.getElementById("youtubeControl");
+        const internetControlLink = document.getElementById("internetControl");
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
 
@@ -94,6 +117,14 @@
 
         shareButton.addEventListener("click", () => {
             tryParse(shareLinkInput.value);
+        });
+
+        youtubeControlLink.addEventListener("click", () => {
+            window.location.replace(window.location.origin + "/youtube")
+        });
+
+        internetControlLink.addEventListener("click", () => {
+            window.location.replace(window.location.origin + "/website")
         });
 
         const url = new URL(document.location);

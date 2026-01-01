@@ -144,8 +144,16 @@
         const youtubeId = document.getElementById("youtube-id").innerHTML;
 
         const popupContainer = document.getElementById("popup-container");
+        const selectJumpButton = document.getElementById("select-jump");
+
         function go(thing, params) {
-            var url = new URL(window.location.origin + "/youtube/" + youtubeId + "/" + thing);
+            let url = window.location.origin + "/youtube_action/" + thing;
+            if (youtubeId.length > 0) {
+                url += "/" + youtubeId
+            }
+
+            url = new URL(url);
+
             if (params) {
                 for (const [key, value] of Object.entries(params)) {
                     url.searchParams.append(key, value);
@@ -158,9 +166,13 @@
             window.location.replace(window.location.origin + "/close");
         }
 
-        document.getElementById("select-jump").onclick = () => {
-            popupContainer.style.display = "flex";
-        }
+        if (youtubeId.length > 0) {
+            selectJumpButton.onclick = () => {
+                popupContainer.style.display = "flex";
+            }
+        } else {
+            selectJumpButton.style.display = "none";
+        }        
 
         document.getElementById("close-popup").onclick = () => {
             popupContainer.style.display = "none";
