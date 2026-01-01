@@ -62,28 +62,34 @@
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
 
-        function tryParse(url) {
-            if (url == null) {
-                return;
+        function tryParse(text) {
+            if (text == null) {
+                return false;
             }
 
-            let youtubeShortMatch = url.match(/(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+)/);
+            let youtubeShortMatch = text.match(/(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+)/);
             if (youtubeShortMatch) {
                 let id = youtubeShortMatch.groups.id
 
                 window.location.replace(window.location.origin + "/youtube/" + id);
-                return;
+                return true;
             }
 
-            let youtubeMatch = url.match(/(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+)/);
+            let youtubeMatch = text.match(/(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+)/);
             if (youtubeMatch) {
                 let id = youtubeMatch.groups.id
 
                 window.location.replace(window.location.origin + "/youtube/" + id);
-                return;
+                return true;
             }
 
-            window.location.replace(window.location.origin + "/website/" + url);
+            let urlMatch = text.match(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/);
+            if (urlMatch) {
+                window.location.replace(window.location.origin + "/website/" + text);
+                return true;
+            }
+
+            return false;
         }
 
         shareButton.addEventListener("click", () => {
@@ -97,7 +103,9 @@
 
         const checkUrls = [shareLink, shareDescription, shareName]
         for (urlToCheck of checkUrls) {
-            tryParse(urlToCheck);
+            if (tryParse(urlToCheck)) {
+                break;
+            }
         }
     </script>
 </body>
