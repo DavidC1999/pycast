@@ -1,6 +1,6 @@
 from flask import Flask, render_template, current_app, request
 
-import subprocess, os.path
+import subprocess, os.path, time
 
 import x11 as platformspecific
 
@@ -24,6 +24,11 @@ def launch_youtube(id=None, time=None):
         url += "&t=" + time
     
     launch_website(url)
+
+def focus_npo_player():
+    # Hacky solution to focus the video player:
+    time.sleep(8)
+    platformspecific.keypress("Tab")
 
 @app.route("/website")
 @app.route("/website/<path:url>")
@@ -68,6 +73,31 @@ def route_youtube_action(action=None, id=None):
 
 
     return render_template("youtube.html", id=id or "")
+
+@app.route("/npo")
+@app.route("/npo/<path:url>")
+def route_npo(url=None):
+    if url is not None:
+        launch_website(url)
+        focus_npo_player()
+    
+    return render_template("npo.html")
+
+@app.route("/npo_action/<action>")
+def route_npo_action(action=None):
+    if action == "toggleplay":
+        platformspecific.keypress("space")
+    elif action == "fullscreen":
+        platformspecific.keypress("f")
+    elif action == "back":
+        platformspecific.keypress("Left")
+    elif action == "forward":
+        platformspecific.keypress("Right")
+    elif action == "refresh":
+        platformspecific.keypress("F5")
+        focus_npo_player()
+    
+    return render_template("npo.html")
 
 @app.route("/close")
 def route_close():

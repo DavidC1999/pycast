@@ -72,6 +72,7 @@
             <h2>Jump to control:</h2>
             <div class="controlLinks">
                 <button id="youtubeControl"><img src="./asset/yt.png" alt="YouTube"></button>
+                <button id="npoControl"><img src="./asset/npo.png" alt="NPO"></button>
                 <button id="internetControl"><img src="./asset/internet.png" alt="Internet"></button>
             </div>
         </div>
@@ -81,34 +82,49 @@
         const shareButton = document.getElementById("share");
         const shareForm = document.getElementById("shareForm");
         const youtubeControlLink = document.getElementById("youtubeControl");
+        const npoControlLink = document.getElementById("npoControl");
         const internetControlLink = document.getElementById("internetControl");
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
+
+        function go(place) {
+            document.getElementsByClassName("container")[0].style.display = "none";
+            window.location.replace(window.location.origin + place);
+        }
 
         function tryParse(text) {
             if (text == null) {
                 return false;
             }
 
-            let youtubeShortMatch = text.match(/(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+)/);
+            let youtubeShortMatch = text.match(/.*(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+).*/);
             if (youtubeShortMatch) {
                 let id = youtubeShortMatch.groups.id
-
-                window.location.replace(window.location.origin + "/youtube/" + id);
+                
+                document.body.style.display = "none"; // Display empty page while we're loading.
+                go("/youtube/" + id);
                 return true;
             }
 
-            let youtubeMatch = text.match(/(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+)/);
+            let youtubeMatch = text.match(/.*(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+).*/);
             if (youtubeMatch) {
                 let id = youtubeMatch.groups.id
 
-                window.location.replace(window.location.origin + "/youtube/" + id);
+                go("/youtube/" + id);
                 return true;
             }
 
-            let urlMatch = text.match(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/);
+            let npoMatch = text.match(/.*(?<url>https?:\/\/(www\.)?npo\.nl\/?([^\/\n]+\/)*[^\/\n]+).*/);
+            if (npoMatch) {
+                let url = npoMatch.groups.url;
+                go("/npo/" + url);
+                return true;
+            }
+
+            let urlMatch = text.match(/.*(?<url>https?:\/\/([^\/.]+\.)*[^.\/]+\/?([^\/\n]+\/)*[^\/\n]+).*/);
             if (urlMatch) {
-                window.location.replace(window.location.origin + "/website/" + text);
+                let url = urlMatch.groups.url
+                go("/website/" + url);
                 return true;
             }
 
@@ -120,11 +136,15 @@
         });
 
         youtubeControlLink.addEventListener("click", () => {
-            window.location.replace(window.location.origin + "/youtube")
+            go("/youtube")
+        });
+
+        npoControlLink.addEventListener("click", () => {
+            go("/npo")
         });
 
         internetControlLink.addEventListener("click", () => {
-            window.location.replace(window.location.origin + "/website")
+            go("/website")
         });
 
         const url = new URL(document.location);
