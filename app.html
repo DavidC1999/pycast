@@ -32,11 +32,8 @@
             justify-content: center;
         }
 
-        #toggleSettings {
-            width: 40px;
-            height: 40px;
-            position: absolute;
-            right: 20px;
+        #saveHostname {
+            margin-top: 10px;
         }
 
         .form {
@@ -44,8 +41,12 @@
             flex-direction: column;
         }
 
-        .formSubmit {
-            margin-top: 10px;
+        #share {
+            height: 30vh;
+        }
+
+        #separator {
+            margin: 30px 0;
         }
     </style>
 </head>
@@ -53,20 +54,18 @@
     <div class="container">
         <div class="header">
             <h1>PyCast</h1>
-            <input type="button" id="toggleSettings" value="⚙">
         </div>
         <div class="main">
+            <div id="shareForm" class="form">
+                <input type="button" id="share" value="Open a link"/>
+            </div>
+            <hr id="separator"/>
             <div id="hostnameForm" class="form">
                 <label>Hostname:</label>
                 <input type="text" id="hostnameInput"/>
                 <label>Port:</label>
                 <input type="text" id="portInput"/><br/>
-                <input type="button" id="saveHostname" class="formSubmit" value="Save">
-            </div>
-            <div id="shareForm" class="form">
-                <label>Share link:</label>
-                <input type="text" id="shareLinkInput"/>
-                <input type="button" id="share" class="formSubmit" value="Go!"/>
+                <input type="button" id="saveHostname" value="Save">
             </div>
         </div>
     </div>
@@ -76,61 +75,48 @@
         const shareLinkInput = document.getElementById("shareLinkInput");
         const saveHostnameButton = document.getElementById("saveHostname");
         const shareButton = document.getElementById("share");
-        const toggleSettingsButton = document.getElementById("toggleSettings");
         const hostnameForm = document.getElementById("hostnameForm");
         const shareForm = document.getElementById("shareForm");
+        const separator = document.getElementById("separator");
 
         const hostnameKey = "hostname";
         const defaultPort = 8080;
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
 
-        let settingsOpen = false;
-
-        let storedHostname = window.localStorage.getItem(hostnameKey);
-
-        function applySettingsOpen()
-        {
-            if (settingsOpen) {
-                hostnameForm.style.display = "flex";
-                shareForm.style.display = "none";
-            } else {
-                hostnameForm.style.display = "none";
-                shareForm.style.display = "flex";
-            }
-        }
-
-        saveHostnameButton.addEventListener("click", () => {
-            window.localStorage.setItem(hostnameKey, hostnameInput.value + ":" + portInput.value);
-        });
-
-        toggleSettingsButton.addEventListener("click", () => {
-            settingsOpen = !settingsOpen;
-            applySettingsOpen();
-        });
-
-        shareButton.addEventListener("click", () => {
-            window.location.replace(baseUrl + "/share-handler.html?link=" + shareLinkInput.value);
-        });
+        let hostname = window.localStorage.getItem(hostnameKey);
 
         function main() {
-            if (storedHostname == null) {
-                storedHostname = "";
+            if (hostname == null) {
+                hostname = "";
             }
 
-            if (storedHostname.includes(":"))
+            if (hostname.includes(":"))
             {
-                const split = storedHostname.split(":");
+                const split = hostname.split(":");
                 hostnameInput.value = split[0];
                 portInput.value = split[1];
             }
             else
             {
-                hostnameInput.value = storedHostname;
+                hostnameInput.value = hostname;
                 portInput.value = defaultPort;
             }
 
-            applySettingsOpen();
+            saveHostnameButton.addEventListener("click", () => {
+                const newHostName = hostnameInput.value + ":" + portInput.value;
+                window.localStorage.setItem(hostnameKey, newHostName);
+                window.location.replace("http://" + newHostName + "/")
+            });
+
+            if (hostname.length > 0) {
+                shareButton.addEventListener("click", () => {
+                    window.location.replace("http://" + hostname + "/");
+                });
+            } else {
+                shareButton.style.display = "none";
+                separator.style.display = "none";
+            }
         }
 
         main();
