@@ -47,15 +47,15 @@
             margin-top: 10px;
         }
 
-        .controlLinks {
-            display: flex;
-            gap: 10px;
+        .explain {
+            font-size: small;
         }
 
-        .controlLinks button img {
-            width: 50px;
-            height: 50px;
+        {% if not active_control %}
+        #activeControlForm {
+            display: none;
         }
+        {% endif %}
     </style>
 </head>
 <body>
@@ -64,20 +64,18 @@
             <h1>PyCast</h1>
         </div>
         <div class="main">
-            <div id="shareForm" class="form">
+            <div class="form">
                 <label>Share link:</label>
                 <input type="url" id="shareLinkInput"/>
                 <input type="button" id="share" class="formSubmit" value="Go!"/>
             </div>
-            <h2>Jump to control:</h2>
-            <div class="controlLinks">
-                <button id="youtubeControl"><img src="./asset/yt.png" alt="YouTube"></button>
-                <button id="npoControl"><img src="./asset/npo.png" alt="NPO"></button>
-                <button id="internetControl"><img src="./asset/internet.png" alt="Internet"></button>
+            <div class="form" id="activeControlForm">
+                <h2>Jump to control:</h2>
+                <input type="button" id="goToControl" class="formSubmit" value="Jump to active control"/>
             </div>
-            <h2>Profile name:</h2>
-            <span>The name of the Firefox profile, which allows users of the same PyCast instance to e.g. log into their personal accounts and install their own preferred extensions.</span>
-            <div id="profileSelect" class="form">
+            <div class="form">
+                <h2>Profile name:</h2>
+                <span class="explain">The name of the Firefox profile, which allows users of the same PyCast instance to e.g. log into their personal accounts and install their own preferred extensions.</span>
                 <input type="text" id="profileInput"/>
             </div>
         </div>
@@ -85,10 +83,7 @@
     <script>
         const shareLinkInput = document.getElementById("shareLinkInput");
         const shareButton = document.getElementById("share");
-        const shareForm = document.getElementById("shareForm");
-        const youtubeControlLink = document.getElementById("youtubeControl");
-        const npoControlLink = document.getElementById("npoControl");
-        const internetControlLink = document.getElementById("internetControl");
+        const goToControlButton = document.getElementById("goToControl");
         const profileInput = document.getElementById("profileInput");
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
@@ -150,20 +145,12 @@
             tryParse(shareLinkInput.value);
         });
 
-        youtubeControlLink.addEventListener("click", () => {
-            go("/youtube")
-        });
-
-        npoControlLink.addEventListener("click", () => {
-            go("/npo")
-        });
-
-        internetControlLink.addEventListener("click", () => {
-            go("/website")
-        });
-
         profileInput.addEventListener("change", () => {
             window.localStorage.setItem(profileKey, profileInput.value);
+        });
+
+        goToControlButton.addEventListener("click", () => {
+            go("/active-control")
         });
 
         const url = new URL(document.location);
@@ -172,6 +159,7 @@
         const shareLink = url.searchParams.get("link");
 
         const checkUrls = [shareLink, shareDescription, shareName]
+
         for (urlToCheck of checkUrls) {
             if (tryParse(urlToCheck)) {
                 break;

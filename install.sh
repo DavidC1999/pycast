@@ -25,18 +25,6 @@ then
     echo "PyCast only works on x11"
 fi
 
-
-if ! dpkg -s xdotool > /dev/null 2>&1
-then
-    echo xdotool not found
-    read -p "Do you wish to install it right now? [yn]" yn
-    case $yn in
-        [Yy]* ) sudo apt install xdotool; break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no.";;
-    esac
-fi
-
 if ! dpkg -s python3-venv > /dev/null 2>&1
 then
     echo python3-venv not found
@@ -62,9 +50,6 @@ fi
 source .venv/bin/activate
 
 pip install -r requirements.txt
-
-echo Creating firefox profile...
-firefox -CreateProfile pycast
 
 read -p "Do you wish to start PyCast as a systemd daemon? [yn]" yn
 case $yn in

@@ -138,19 +138,12 @@
         </div>
     </div>
 
-    <div id="youtube-id" style="display: none;">{{id}}</div>
-
     <script>
-        const youtubeId = document.getElementById("youtube-id").innerHTML;
-
         const popupContainer = document.getElementById("popup-container");
         const selectJumpButton = document.getElementById("select-jump");
 
         function go(thing, params) {
             let url = window.location.origin + "/youtube_action/" + thing;
-            if (youtubeId.length > 0) {
-                url += "/" + youtubeId
-            }
 
             url = new URL(url);
 
@@ -166,13 +159,9 @@
             window.location.replace(window.location.origin + "/close");
         }
 
-        if (youtubeId.length > 0) {
-            selectJumpButton.onclick = () => {
-                popupContainer.style.display = "flex";
-            }
-        } else {
-            selectJumpButton.style.display = "none";
-        }        
+        selectJumpButton.onclick = () => {
+            popupContainer.style.display = "flex";
+        }
 
         document.getElementById("close-popup").onclick = () => {
             popupContainer.style.display = "none";
