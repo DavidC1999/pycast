@@ -1,10 +1,27 @@
 from flask import Flask, render_template, current_app, request
 
-import subprocess, os.path, time
+import subprocess
+import os
+import os.path
+import time
 
 import x11 as platformspecific
 
 app = Flask(__name__)
+
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+PROFILES_DIR = f"{SCRIPT_DIR}/firefox_profiles"
+DEFAULT_PROFILE_NAME = "pycast"
+DEFAULT_PROFILE = f"{PROFILES_DIR}/{DEFAULT_PROFILE_NAME}"
+
+def create_firefox_profile(profile_name):
+    profile_dir = f"{PROFILES_DIR}/{profile_name}"
+    cmd = subprocess.Popen(["firefox", "-CreateProfile", f"{profile_name} {profile_dir}"])
+    # waits for command to exit to make sure the profile exists before returning from function
+    cmd.communicate()
+
+def get_profiles():
+    return [a for a in os.listdir(PROFILES_DIR) if os.path.isdir(f"{PROFILES_DIR}/{a}")]
 
 @app.route("/")
 def index():
@@ -14,7 +31,15 @@ def close_tab():
     platformspecific.keypress("ctrl+w")
 
 def launch_website(url):
-    subprocess.Popen(["firefox", "-P", "pycast", url])
+    profile = request.args.get("profile") if "profile" in request.args else DEFAULT_PROFILE_NAME
+
+    existing_profiles = get_profiles()
+
+    if not profile in existing_profiles:
+        create_firefox_profile(profile)
+    
+    subprocess.Popen(["firefox", "-P", profile, url])
+
     platformspecific.focus_browser()
 
 def launch_youtube(id=None, time=None):
@@ -112,4 +137,7 @@ def route_asset(asset=None):
     return current_app.send_static_file("notfound.png")
 
 if __name__ == "__main__":
+    if not os.path.exists(DEFAULT_PROFILE):
+        create_firefox_profile(DEFAULT_PROFILE_NAME)
+
     app.run(host="0.0.0.0", port=8080)

@@ -75,6 +75,11 @@
                 <button id="npoControl"><img src="./asset/npo.png" alt="NPO"></button>
                 <button id="internetControl"><img src="./asset/internet.png" alt="Internet"></button>
             </div>
+            <h2>Profile name:</h2>
+            <span>The name of the Firefox profile, which allows users of the same PyCast instance to e.g. log into their personal accounts and install their own preferred extensions.</span>
+            <div id="profileSelect" class="form">
+                <input type="text" id="profileInput"/>
+            </div>
         </div>
     </div>
     <script>
@@ -84,12 +89,22 @@
         const youtubeControlLink = document.getElementById("youtubeControl");
         const npoControlLink = document.getElementById("npoControl");
         const internetControlLink = document.getElementById("internetControl");
+        const profileInput = document.getElementById("profileInput");
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
 
+        const profileKey = "profile";
+        
+        let profileValue = window.localStorage.getItem(profileKey);
+        if (profileValue == null) {
+            profileValue = "pycast";
+        }
+
+        profileInput.value = profileValue;
+
         function go(place) {
             document.getElementsByClassName("container")[0].style.display = "none";
-            window.location.replace(window.location.origin + place);
+            window.location.replace(window.location.origin + place + "?profile=" + profileInput.value);
         }
 
         function tryParse(text) {
@@ -145,6 +160,10 @@
 
         internetControlLink.addEventListener("click", () => {
             go("/website")
+        });
+
+        profileInput.addEventListener("change", () => {
+            window.localStorage.setItem(profileKey, profileInput.value);
         });
 
         const url = new URL(document.location);
