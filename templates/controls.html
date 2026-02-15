@@ -177,18 +177,20 @@
             window.location.replace(window.location.origin + "/close");
         }
 
-        selectJumpButton.onclick = () => {
-            popupContainer.style.display = "flex";
-        }
-
         document.getElementById("close-popup").onclick = () => {
             popupContainer.style.display = "none";
         }
 
-        document.getElementById("jump").onclick = () => {
-            let m = document.getElementById("jump-minutes").value;
-            let s = document.getElementById("jump-seconds").value;
-            go("jump", {"m": m, "s": s})
+        if (selectJumpButton) {
+            selectJumpButton.onclick = () => {
+                popupContainer.style.display = "flex";
+            }
+
+            document.getElementById("jump").onclick = () => {
+                let m = document.getElementById("jump-minutes").value;
+                let s = document.getElementById("jump-seconds").value;
+                go("jump", {"m": m, "s": s})
+            }
         }
 
         const autoSelectElems = document.getElementsByClassName("auto-select");
