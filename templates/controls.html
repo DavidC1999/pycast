@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{platform_name}} controls</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+
+            width: min(90vw, 800px);
+            height: min(100vh, 800px);
+            margin: auto;
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        .top > * {
+            height: min(100%, 50px);
+            flex-grow: 1;
+        }
+
+        .main {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+            flex-grow: 5;
+
+            width: 100%;
+        }
+
+        .bottom {
+            flex-grow: 1;
+        }
+
+        #toggleplay {
+            width: clamp(100px, 50%, 300px);
+            height: clamp(100px, 50%, 300px);
+        }
+
+        .minor {
+            height: clamp(100px, 10%, 300px);
+            width: 10%
+        }
+
+        #close {
+            color: red;
+            font-weight: bold;
+        }
+
+        #select-jump {
+            width: 100%;
+            height: min(100%, 50px);
+            font-size: 30px;
+        }
+
+        input[type=button] {
+            background: white;
+            border: 1px black solid;
+        }
+
+        #popup-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+
+            display: flex;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        #close-popup {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        #time-picker {
+            display: flex;
+            justify-content: center;
+        }
+
+        #time-picker span {
+            width: 30%;
+            text-align: center;
+        }
+
+        #time-picker input {
+            width: 50%;
+        }
+
+        #time-picker #jump {
+            width: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top">
+            {% if "fullscreen" in actions %}
+            <input type="button" value="⛶" class="simple-action" simple-action="fullscreen"/>
+            {% endif %}
+            {% if "refresh" in actions %}
+            <input type="button" value="↻" class="simple-action" simple-action="refresh"/>
+            {% endif %}
+            {% if "captions" in actions %}
+            <input type="button" value="CC" class="simple-action" simple-action="captions"/>
+            {% endif %}
+            <input type="button" value="X" id="close"/>
+        </div>
+
+        <div class="main">
+            {% if "bback" in actions %}
+            <input type="button" value="<<" id="bback" class="simple-action minor" simple-action="bback"/>
+            {% endif %}
+            {% if "back" in actions %}
+            <input type="button" value="<" id="back" class="simple-action minor" simple-action="back"/>
+            {% endif %}
+            {% if "toggleplay" in actions %}
+            <input type="button" value="⏯" id="toggleplay" class="simple-action" simple-action="toggleplay"/>
+            {% endif %}
+            {% if "forward" in actions %}
+            <input type="button" value=">" id="forward" class="simple-action minor" simple-action="forward"/>
+            {% endif %}
+            {% if "fforward" in actions %}
+            <input type="button" value=">>" id="fforward" class="simple-action minor" simple-action="fforward"/>
+            {% endif %}
+        </div>
+
+        <div class="bottom">
+            {% if "jump" in actions %}
+            <input type="button" value="↷" id="select-jump"/>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="popup-container">
+        <input type="button" value="X" id="close-popup">
+        <div id="time-picker">
+            <span><input type="number" id="jump-minutes" class="auto-select" value="0"> m</span>
+            <span><input type="number" id="jump-seconds" class="auto-select" value="0"> s</span>
+            <input type="button" value=">" id="jump">
+        </div>
+    </div>
+
+    <script>
+        const popupContainer = document.getElementById("popup-container");
+        const selectJumpButton = document.getElementById("select-jump");
+
+        function go(thing, params) {
+            let url = window.location.origin + "/action/" + thing;
+
+            url = new URL(url);
+
+            if (params) {
+                for (const [key, value] of Object.entries(params)) {
+                    url.searchParams.append(key, value);
+                }
+            }
+            window.location.replace(url.toString());
+        }
+
+        document.getElementById("close").onclick = () => {
+            window.location.replace(window.location.origin + "/close");
+        }
+
+        selectJumpButton.onclick = () => {
+            popupContainer.style.display = "flex";
+        }
+
+        document.getElementById("close-popup").onclick = () => {
+            popupContainer.style.display = "none";
+        }
+
+        document.getElementById("jump").onclick = () => {
+            let m = document.getElementById("jump-minutes").value;
+            let s = document.getElementById("jump-seconds").value;
+            go("jump", {"m": m, "s": s})
+        }
+
+        const autoSelectElems = document.getElementsByClassName("auto-select");
+        for (const elem of autoSelectElems) {
+            elem.addEventListener("focus", () => elem.select());
+        }
+
+        const simpleActions = document.getElementsByClassName("simple-action");
+        for (const elem of simpleActions) {
+            elem.addEventListener("click", () => {
+                const action = elem.getAttribute("simple-action");
+                go(action);
+            });
+        }
+    </script>
+</body>
+</html>

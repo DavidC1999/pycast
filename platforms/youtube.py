@@ -3,7 +3,7 @@ from pycast import *
 class Youtube(Platform):
     def __init__(self):
         super().__init__(
-            "youtube.html",
+            "YouTube",
             r".*(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?P<id>[^?&#]+).*",
             (Action.toggleplay, lambda: sendkey("k")),
             (Action.fullscreen, lambda: sendkey("f")),

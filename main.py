@@ -1,4 +1,4 @@
-from flask import Flask, render_template, current_app, request
+from flask import Flask, render_template, request
 
 import os
 import importlib
@@ -13,7 +13,9 @@ def render_index():
 
 
 def render_platform():
-    return render_template(session().active_platform.template)
+    platform = session().active_platform
+    actions = [Action.int_to_str(key) for key in platform.actions.keys()]
+    return render_template("controls.html", platform_name=platform.name, actions=actions)
 
 
 def launch(platform, params):
@@ -65,7 +67,7 @@ def index():
 
 @app.route("/action/<action_name>")
 def route_action(action_name=None):
-    action = Action.to_action(action_name)
+    action = Action.str_to_int(action_name)
     if action is None:
         return render_platform()
     

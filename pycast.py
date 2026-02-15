@@ -27,29 +27,39 @@ class Action:
     jump = 8
 
     @staticmethod
-    def actions():
+    def action_names():
         return [x for x in vars(Action) if not x.startswith("_") and not callable(getattr(Action, x))]
+    
+    @staticmethod
+    def action_values():
+        return [getattr(Action, x) for x in Action.action_names()]
 
     @staticmethod
     def count():
-        return len(Action.actions())
+        return len(Action.action_names())
     
     @staticmethod
-    def is_action(text):
-        return text in Action.actions()
+    def is_action(value):
+        return value in Action.action_names() or value in Action.action_values()
 
     @staticmethod
-    def to_action(text):
+    def str_to_int(text):
         if not Action.is_action(text):
             return None
-        
         return getattr(Action, text)
     
+    @staticmethod
+    def int_to_str(nr):
+        for action_name in Action.action_names():
+            if Action.str_to_int(action_name) == nr:
+                return action_name
+        
+        return None
 
 
 class Platform(abc.ABC):
-    def __init__(self, template: str, regex: str | list[str], *actions):
-        self.template = template
+    def __init__(self, name: str, regex: str | list[str], *actions):
+        self.name = name
 
         if isinstance(regex, list):
             self.regexes = [re.compile(x) for x in regex]
