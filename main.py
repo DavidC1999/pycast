@@ -15,6 +15,9 @@ DEFAULT_PROFILE_NAME = "pycast"
 DEFAULT_PROFILE = f"{PROFILES_DIR}/{DEFAULT_PROFILE_NAME}"
 
 def create_firefox_profile(profile_name):
+    if not os.path.exists(PROFILES_DIR):
+        os.makedirs(PROFILES_DIR)
+
     profile_dir = f"{PROFILES_DIR}/{profile_name}"
     cmd = subprocess.Popen(["firefox", "-CreateProfile", f"{profile_name} {profile_dir}"])
     # waits for command to exit to make sure the profile exists before returning from function
