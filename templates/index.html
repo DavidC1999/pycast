@@ -97,9 +97,15 @@
 
         profileInput.value = profileValue;
 
-        function go(place) {
+        function go(place, parameters) {
             document.getElementsByClassName("container")[0].style.display = "none";
-            window.location.replace(window.location.origin + place + "?profile=" + profileInput.value);
+
+            goUrl = window.location.origin + place + "?profile=" + profileInput.value;
+            for (parameter_name in parameters) {
+                goUrl += `&${parameter_name}=${parameters[parameter_name]}`
+            }
+
+            window.location.replace(goUrl);
         }
 
         function tryParse(text) {
@@ -110,9 +116,9 @@
             let youtubeShortMatch = text.match(/.*(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+).*/);
             if (youtubeShortMatch) {
                 let id = youtubeShortMatch.groups.id
-                
+
                 document.body.style.display = "none"; // Display empty page while we're loading.
-                go("/youtube/" + id);
+                go("/launch/youtube", {"id": id});
                 return true;
             }
 
@@ -120,7 +126,7 @@
             if (youtubeMatch) {
                 let id = youtubeMatch.groups.id
 
-                go("/youtube/" + id);
+                go("/launch/youtube", {"id": id});
                 return true;
             }
 
