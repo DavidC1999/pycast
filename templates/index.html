@@ -108,47 +108,9 @@
             window.location.replace(goUrl);
         }
 
-        function tryParse(text) {
-            if (text == null) {
-                return false;
-            }
-
-            let youtubeShortMatch = text.match(/.*(https?:\/\/(www\.)?)?youtu\.be\/(?<id>[^?&#]+).*/);
-            if (youtubeShortMatch) {
-                let id = youtubeShortMatch.groups.id
-
-                document.body.style.display = "none"; // Display empty page while we're loading.
-                go("/launch/youtube", {"id": id});
-                return true;
-            }
-
-            let youtubeMatch = text.match(/.*(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?<id>[^?&#]+).*/);
-            if (youtubeMatch) {
-                let id = youtubeMatch.groups.id
-
-                go("/launch/youtube", {"id": id});
-                return true;
-            }
-
-            let npoMatch = text.match(/.*(?<url>https?:\/\/(www\.)?npo\.nl\/?([^\/\n]+\/)*[^\/\n]+).*/);
-            if (npoMatch) {
-                let url = npoMatch.groups.url;
-                go("/npo/" + url);
-                return true;
-            }
-
-            let urlMatch = text.match(/.*(?<url>https?:\/\/([^\/.]+\.)*[^.\/]+\/?([^\/\n]+\/)*[^\/\n]+).*/);
-            if (urlMatch) {
-                let url = urlMatch.groups.url
-                go("/website/" + url);
-                return true;
-            }
-
-            return false;
-        }
-
         shareButton.addEventListener("click", () => {
             tryParse(shareLinkInput.value);
+            go("/", { "link": shareLinkInput.value });
         });
 
         profileInput.addEventListener("change", () => {
@@ -158,19 +120,6 @@
         goToControlButton.addEventListener("click", () => {
             go("/active-control")
         });
-
-        const url = new URL(document.location);
-        const shareName = url.searchParams.get("name");
-        const shareDescription = url.searchParams.get("description");
-        const shareLink = url.searchParams.get("link");
-
-        const checkUrls = [shareLink, shareDescription, shareName]
-
-        for (urlToCheck of checkUrls) {
-            if (tryParse(urlToCheck)) {
-                break;
-            }
-        }
     </script>
 </body>
 </html>

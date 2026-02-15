@@ -5,10 +5,10 @@ from selenium.webdriver.firefox.service import Service
 import os
 import subprocess
 
-from flask import Flask, render_template, current_app, request
+from flask import request
 
 import abc
-import inspect
+import re
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 PROFILES_DIR = f"{SCRIPT_DIR}/firefox_profiles"
@@ -48,8 +48,14 @@ class Action:
 
 
 class Platform(abc.ABC):
-    def __init__(self, template: str, *actions):
+    def __init__(self, template: str, regex: str | list[str], *actions):
         self.template = template
+
+        if isinstance(regex, list):
+            self.regexes = [re.compile(x) for x in regex]
+        else:
+            self.regexes = [re.compile(regex)]
+        
         self.actions = {}
 
         for action in actions:
@@ -65,8 +71,18 @@ class Platform(abc.ABC):
             self.actions[action[0]] = action[1]
     
     @abc.abstractmethod
-    def launch(self):
+    def launch(self, params: dict[str, str]):
         pass
+
+    def check_url(self, text) -> dict[str, str] | None:
+        for regex in self.regexes:
+            matches = regex.match(text)
+
+            if matches is not None:
+                return matches.groupdict()
+        
+        return None
+
 
 
 class Session:
@@ -108,15 +124,16 @@ def sendkey(key):
         .perform()
 
 def close_browser():
-
+    global _session
     if _session.driver is not None:
         _session.driver.quit()
         _session.driver = None
 
 def close_session():
     global _session
-    close_browser()
-    _session = None
+    if _session is not None:
+        close_browser()
+        _session = None
 
 def open_session(platform: Platform):
     global _session

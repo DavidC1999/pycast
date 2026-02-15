@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+</head>
+<body>
+    <script>
+        const profileKey = "profile";
+        let profileValue = window.localStorage.getItem(profileKey);
+        if (profileValue == null) {
+            profileValue = "pycast";
+        }
+
+        const currentUrl = new URL(window.location);
+        const currentSearchParams = currentUrl.search;
+
+        let redirectTo = new URL(window.location.origin + "/launch" + currentSearchParams);
+        redirectTo.searchParams.append("profile", profileValue);
+
+        window.location.replace(redirectTo.toString());
+    </script>
+</body>
+</html>

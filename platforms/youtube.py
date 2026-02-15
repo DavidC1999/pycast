@@ -4,6 +4,7 @@ class Youtube(Platform):
     def __init__(self):
         super().__init__(
             "youtube.html",
+            r".*(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?P<id>[^?&#]+).*",
             (Action.toggleplay, lambda: sendkey("k")),
             (Action.fullscreen, lambda: sendkey("f")),
             (Action.bback, lambda: sendkey("j")),
@@ -31,8 +32,8 @@ class Youtube(Platform):
         id = session().user_args
         self._open_youtube(id, f"{minutes}m{seconds}s")
 
-    def launch(self):
-        session().user_args = get_url_arg("id")
+    def launch(self, params: dict[str, str]):
+        session().user_args = params["id"]
         self._open_youtube(session().user_args)
 
 def create():
