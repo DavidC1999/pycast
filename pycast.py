@@ -148,7 +148,8 @@ def open_session(platform: Platform, profiles_dir):
             break
 
     _session.driver_options = Options()
-    _session.driver_options.profile = webdriver.FirefoxProfile(profile_dir)
+    _session.driver_options.add_argument("-profile")
+    _session.driver_options.add_argument(f"{profile_dir}")
     _session.active_platform = platform
 
 
