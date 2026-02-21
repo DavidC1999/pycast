@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request
+import sys
+import getpass
 
 import os
 import importlib
 
 from pycast import *
 
+profiles_dir = None
 app = Flask(__name__)
 platforms: list[Platform] = []
     
@@ -21,7 +24,7 @@ def render_platform():
 def launch(platform, params):
     close_session()
     
-    open_session(platform)
+    open_session(platform, profiles_dir)
     session().active_platform.launch(params)
 
     return render_platform()
@@ -88,8 +91,22 @@ def route_close():
 def route_active_control():
     return session().render_active_control()
 
+def ensure_default_profile():
+    if os.path.exists(DEFAULT_PROFILE_DIR):
+        return
+    cmd = subprocess.Popen(["firefox", "-CreateProfile", f"{DEFAULT_PROFILE_NAME} {DEFAULT_PROFILE_DIR}"])
+    # waits for command to exit to make sure the profile exists before returning from function
+    cmd.communicate()
 
 if __name__ == "__main__":
+    ensure_default_profile()
+
+    if len(sys.argv) > 1:
+        profiles_dir = sys.argv[1]
+    else:
+        username = getpass.getuser()
+        profiles_dir = f"/home/{username}/.mozilla/firefox"
+
     for file in os.listdir("platforms"):
         if file.endswith(".py"):
             module_name = file[:len(file) - len(".py")]

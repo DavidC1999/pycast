@@ -1,4 +1,5 @@
 __pycache__
 .venv
+.vscode
 pycast.service
-firefox_profiles
+firefox_profile

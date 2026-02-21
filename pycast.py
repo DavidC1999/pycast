@@ -3,6 +3,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.firefox.service import Service
 import os
+from pathlib import Path
 import subprocess
 
 from flask import request
@@ -11,9 +12,8 @@ import abc
 import re
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-PROFILES_DIR = f"{SCRIPT_DIR}/firefox_profiles"
+DEFAULT_PROFILE_DIR = f"{SCRIPT_DIR}/firefox_profile"
 DEFAULT_PROFILE_NAME = "pycast"
-DEFAULT_PROFILE = f"{PROFILES_DIR}/{DEFAULT_PROFILE_NAME}"
 
 class Action:
     toggleplay = 0
@@ -93,8 +93,6 @@ class Platform(abc.ABC):
         
         return None
 
-
-
 class Session:
     driver: webdriver.Firefox = None
     driver_options: Options = None
@@ -107,18 +105,6 @@ class Session:
     def render_control(self, render_control: callable):
         self.render_active_control = render_control
         return render_control()
-
-def _create_firefox_profile(profile_name):
-    if not os.path.exists(PROFILES_DIR):
-        os.makedirs(PROFILES_DIR)
-
-    profile_dir = f"{PROFILES_DIR}/{profile_name}"
-    cmd = subprocess.Popen(["firefox", "-CreateProfile", f"{profile_name} {profile_dir}"])
-    # waits for command to exit to make sure the profile exists before returning from function
-    cmd.communicate()
-
-def _get_profiles():
-    return [a for a in os.listdir(PROFILES_DIR) if os.path.isdir(f"{PROFILES_DIR}/{a}")]
 
 _session: Session = None
 
@@ -145,7 +131,7 @@ def close_session():
         close_browser()
         _session = None
 
-def open_session(platform: Platform):
+def open_session(platform: Platform, profiles_dir):
     global _session
     if _session is not None:
         close_session()
@@ -154,15 +140,15 @@ def open_session(platform: Platform):
 
     profile = request.args.get("profile") if "profile" in request.args else DEFAULT_PROFILE_NAME
 
-    existing_profiles = _get_profiles()
-
-    if not profile in existing_profiles:
-        _create_firefox_profile(profile)
+    profile_dir = DEFAULT_PROFILE_DIR
+    dir_items = os.listdir(profiles_dir)
+    for item in dir_items:
+        if re.match((r"[a-zA-Z0-9]+." + profile), item):
+            profile_dir = f"{profiles_dir}/{item}"
+            break
 
     _session.driver_options = Options()
-    _session.driver_options.add_argument("-profile")
-    _session.driver_options.add_argument(f"{PROFILES_DIR}/{profile}")
-
+    _session.driver_options.profile = webdriver.FirefoxProfile(profile_dir)
     _session.active_platform = platform
 
 
