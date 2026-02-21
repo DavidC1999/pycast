@@ -2,6 +2,8 @@ from flask import Flask, render_template, request
 import sys
 import getpass
 
+import urllib.parse
+
 import os
 import importlib
 
@@ -38,6 +40,9 @@ def get_possible_urls_to_check():
     if "name" in request.args:
         to_check.append(request.args["name"])
     
+    for i, item in enumerate(to_check):
+        to_check[i] = urllib.parse.unquote(item)
+
     return to_check
 
 @app.route("/launch")
