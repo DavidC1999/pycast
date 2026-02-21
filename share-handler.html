@@ -33,7 +33,7 @@
     </table>
 
     <script>
-        const url = new URL(document.location);
+        const url = new URL(encodeURI(document.location));
         const sharedName = url.searchParams.get("name");
         const sharedDescription = url.searchParams.get("description");
         const sharedLink = url.searchParams.get("link");
@@ -52,16 +52,16 @@
             
             let paramSign = "?";
 
+            if (sharedLink) {
+                newUrl += paramSign + "link=" + encodeURI(sharedLink)
+                paramSign = "&";
+            }
             if (sharedName) {
-                newUrl += paramSign + "name=" + sharedName
+                newUrl += paramSign + "name=" + encodeURI(sharedName)
                 paramSign = "&";
             }
             if (sharedDescription) {
-                newUrl += paramSign + "description=" + sharedDescription
-                paramSign = "&";
-            }
-            if (sharedLink) {
-                newUrl += paramSign + "link=" + sharedLink
+                newUrl += paramSign + "description=" + encodeURI(sharedDescription)
                 paramSign = "&";
             }
 
