@@ -20,11 +20,6 @@ then
     exit 1
 fi
 
-if [ "$XDG_SESSION_TYPE" != "x11" ]
-then
-    echo "PyCast only works on x11"
-fi
-
 if ! dpkg -s python3-venv > /dev/null 2>&1
 then
     echo python3-venv not found
@@ -57,6 +52,11 @@ case $yn in
     * ) exit 0;;
 esac
 
+if systemctl is-active --quiet pycast; then
+    echo PyCast service is running, stopping...
+    sudo systemctl stop pycast
+fi
+
 if ! command -v systemctl >/dev/null 2>&1
 then
     echo "Running PyCast as a daemon only works with systemd as the init system"
@@ -82,3 +82,6 @@ sudo ln -s $(pwd)/pycast.service /etc/systemd/system
 
 echo Enabling the pycast service
 sudo systemctl enable pycast
+
+echo Starting the pycast service
+sudo systemctl start pycast
