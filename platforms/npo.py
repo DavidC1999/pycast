@@ -42,8 +42,13 @@ class Npo(Platform):
             video_length_s += int(part) * factor
             factor *= 60
         
+        if jump_seconds < 0 or jump_seconds > video_length_s:
+            return
+        
         element_width = seek_bar_elem.size["width"]
-        target_click = element_width * (jump_seconds / video_length_s) - element_width / 2
+        # Add one to make sure we always click inside the element if the user jumps to 0
+        # This can happen due to floating point shenanigans
+        target_click = (element_width * (jump_seconds / video_length_s) - element_width / 2) + 1
 
         # Get the seek bar to show by moving the mouse:
         action = webdriver.ActionChains(session().driver)
