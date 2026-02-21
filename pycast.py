@@ -62,9 +62,9 @@ class Platform(abc.ABC):
         self.name = name
 
         if isinstance(regex, list):
-            self.regexes = [re.compile(x) for x in regex]
+            self.regexes = [re.compile(x, re.MULTILINE) for x in regex]
         else:
-            self.regexes = [re.compile(regex)]
+            self.regexes = [re.compile(regex, re.MULTILINE)]
         
         self.actions = {}
 
@@ -84,8 +84,12 @@ class Platform(abc.ABC):
     def launch(self, params: dict[str, str]):
         pass
 
-    def check_url(self, text) -> dict[str, str] | None:
+    def check_url(self, text: str) -> dict[str, str] | None:
         for regex in self.regexes:
+            # Python seems to struggle with matching text with newlines:
+            text = text.replace("\n", "")
+            text = text.replace("\r", "")
+            
             matches = regex.match(text)
 
             if matches is not None:

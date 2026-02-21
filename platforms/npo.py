@@ -8,7 +8,7 @@ class Npo(Platform):
     def __init__(self):
         super().__init__(
             "NPO",
-            r".*(?P<url>https?://(www\.)?npo\.nl/?([^\/\n]+\/)*[^\/\n]+).*",
+            r".*?(?P<url>https?://(www\.)?npo\.nl/?([^\/\n]+\/)*[^\/\n]+).*",
             (Action.toggleplay, lambda: sendkey(Keys.SPACE)),
             (Action.fullscreen, lambda: sendkey("f")),
             (Action.back, lambda: sendkey(Keys.ARROW_LEFT)),
@@ -17,14 +17,6 @@ class Npo(Platform):
             (Action.captions, lambda: sendkey("c")),
             (Action.jump, lambda: self._jump()),
         )
-
-    def _open_youtube(self, id=None, time=None):
-        url = f"https://www.youtube.com/watch?v={id}"
-
-        if time:
-            url += "&t=" + time
-        
-        open_browser(url)
 
     def _focus_player(self):
         WebDriverWait(session().driver, 20)\
