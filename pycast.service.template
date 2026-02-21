@@ -9,7 +9,7 @@ SupplementaryGroups=audio
 Environment=DISPLAY=:0
 Environment=PULSE_SERVER=unix:/run/user/@userid@/pulse/native
 Environment=XDG_RUNTIME_DIR=/run/user/@userid@
-ExecStart=@basedir@/.venv/bin/python3 @basedir@/main.py
+ExecStart=@basedir@/.venv/bin/python3 @basedir@/main.py /home/@user@/.mozilla/firefox
 Restart=on-failure
 
 [Install]

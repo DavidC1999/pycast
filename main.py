@@ -112,7 +112,7 @@ if __name__ == "__main__":
         username = getpass.getuser()
         profiles_dir = f"/home/{username}/.mozilla/firefox"
 
-    for file in os.listdir("platforms"):
+    for file in os.listdir(f"{SCRIPT_DIR}/platforms"):
         if file.endswith(".py"):
             module_name = file[:len(file) - len(".py")]
             module = importlib.import_module(f"platforms.{module_name}")
