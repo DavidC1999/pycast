@@ -3,12 +3,9 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.firefox.service import Service
 import os
-from pathlib import Path
-import subprocess
 
 from flask import request
 
-import abc
 import re
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -57,11 +54,21 @@ class Action:
         return None
 
 
-class Platform(abc.ABC):
-    def __init__(self, name: str, regex: str | list[str], *actions):
+class Platform:
+    def __init__(
+            self,
+            name: str,
+            id: str,
+            actions: list[tuple],
+            regex: str | list[str] | None = None,
+            launch_buttons: list[tuple] | None = None):
         self.name = name
+        self.id = id
 
-        if isinstance(regex, list):
+        if regex is None:
+            self.regexes = []
+        elif isinstance(regex,
+        list):
             self.regexes = [re.compile(x, re.MULTILINE) for x in regex]
         else:
             self.regexes = [re.compile(regex, re.MULTILINE)]
@@ -79,10 +86,16 @@ class Platform(abc.ABC):
                 raise Exception("action must be callable")
             
             self.actions[action[0]] = action[1]
+        
+        self.launch_buttons = launch_buttons
     
-    @abc.abstractmethod
+    def launch_immediate(self, parameter):
+        _ = parameter
+        raise NotImplementedError()
+    
     def launch(self, params: dict[str, str]):
-        pass
+        _ = params
+        raise NotImplementedError()
 
     def check_url(self, text: str) -> dict[str, str] | None:
         for regex in self.regexes:

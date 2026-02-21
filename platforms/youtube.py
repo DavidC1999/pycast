@@ -3,17 +3,20 @@ from pycast import *
 class Youtube(Platform):
     def __init__(self):
         super().__init__(
-            "YouTube",
-            r".*?(?P<url>(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?P<id>[^?&#]+).*)",
-            (Action.toggleplay, lambda: sendkey("k")),
-            (Action.fullscreen, lambda: sendkey("f")),
-            (Action.bback, lambda: sendkey("j")),
-            (Action.back, lambda: sendkey(Keys.ARROW_LEFT)),
-            (Action.fforward, lambda: sendkey("l")),
-            (Action.forward, lambda: sendkey(Keys.ARROW_RIGHT)),
-            (Action.refresh, lambda: session().driver.refresh()),
-            (Action.captions, lambda: sendkey("c")),
-            (Action.jump, lambda: self._jump_action()),
+            name="YouTube",
+            id="youtube",
+            actions=[
+                (Action.toggleplay, lambda: sendkey("k")),
+                (Action.fullscreen, lambda: sendkey("f")),
+                (Action.bback, lambda: sendkey("j")),
+                (Action.back, lambda: sendkey(Keys.ARROW_LEFT)),
+                (Action.fforward, lambda: sendkey("l")),
+                (Action.forward, lambda: sendkey(Keys.ARROW_RIGHT)),
+                (Action.refresh, lambda: session().driver.refresh()),
+                (Action.captions, lambda: sendkey("c")),
+                (Action.jump, lambda: self._jump_action()),
+            ],
+            regex=r".*?(?P<url>(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?P<id>[^?&#]+).*)",
         )
 
     def _jump_action(self):
@@ -29,4 +32,4 @@ class Youtube(Platform):
         open_browser(params["url"])
 
 def create():
-    return Youtube()
+    return [Youtube()]

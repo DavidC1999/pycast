@@ -6,6 +6,7 @@ import urllib.parse
 
 import os
 import importlib
+import subprocess
 
 from pycast import *
 
@@ -14,7 +15,14 @@ app = Flask(__name__)
 platforms: list[Platform] = []
     
 def render_index():
-    return render_template("index.html", active_control=session() is not None)
+    launch_buttons = []
+    for platform in platforms:
+        if not platform.launch_buttons:
+            continue
+        for button in platform.launch_buttons:
+            launch_buttons.append({"platform": platform.id, "icon": button[0], "parameter": button[1]})
+    
+    return render_template("index.html", active_control=session() is not None, launch_buttons=launch_buttons)
 
 
 def render_platform():
@@ -28,6 +36,14 @@ def launch(platform, params):
     
     open_session(platform, profiles_dir)
     session().active_platform.launch(params)
+
+    return render_platform()
+
+def launch_immediate(platform, parameter):
+    close_session()
+    
+    open_session(platform, profiles_dir)
+    session().active_platform.launch_immediate(parameter)
 
     return render_platform()
 
@@ -59,6 +75,16 @@ def route_launch():
             vars = platform.check_url(possible_url)
             if vars is not None:
                 return launch(platform, vars)
+    return render_index()
+
+@app.route("/launch-immediate")
+def route_launch_immediate():
+    global platforms
+
+    for platform in platforms:
+        if request.args["platform-id"] == platform.id:
+            return launch_immediate(platform, request.args["parameter"])
+
     return render_index()
 
 @app.route("/")
@@ -116,6 +142,9 @@ if __name__ == "__main__":
         if file.endswith(".py"):
             module_name = file[:len(file) - len(".py")]
             module = importlib.import_module(f"platforms.{module_name}")
-            platforms.append(module.create())
+            new_platforms = module.create()
+
+            for platform in new_platforms:
+                platforms.append(platform)
 
     app.run(host="0.0.0.0", port=8080)

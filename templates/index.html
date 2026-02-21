@@ -51,6 +51,20 @@
             font-size: small;
         }
 
+        #launchGrid > *{
+            width: 60px;
+            height: 60px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        #launchGrid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            width: 100%;
+        }
+
         {% if not active_control %}
         #activeControlForm {
             display: none;
@@ -73,6 +87,18 @@
                 <h2>Jump to control:</h2>
                 <input type="button" id="goToControl" class="formSubmit" value="Jump to active control"/>
             </div>
+            {% if launch_buttons|length > 0 %}
+            <div class="form" id="launchForm">
+                <h2>Launch:</h2>
+                <div id="launchGrid">
+                {% for button in launch_buttons %}
+                    <button platform="{{button.platform}}" parameter="{{button.parameter}}">
+                        <img width="50" src="{{button.icon}}" alt="">
+                    </button>
+                {% endfor %}
+                </div>
+            </div>
+            {% endif %}
             <div class="form">
                 <h2>Profile name:</h2>
                 <p class="explain">The name of the Firefox profile, which allows users of the same PyCast instance to e.g. log into their personal accounts and install their own preferred extensions.</p>
@@ -86,6 +112,7 @@
         const shareButton = document.getElementById("share");
         const goToControlButton = document.getElementById("goToControl");
         const profileInput = document.getElementById("profileInput");
+        const launchButtons = document.getElementById("launchForm").getElementsByTagName("button");
 
         const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
 
@@ -121,6 +148,18 @@
         goToControlButton.addEventListener("click", () => {
             go("/active-control")
         });
+
+        for(elem of launchButtons) {
+            const platform = elem.getAttribute("platform");
+            const parameter = elem.getAttribute("parameter");
+
+            elem.addEventListener("click", button => {
+                go("/launch-immediate", {
+                    "platform-id": platform,
+                    "parameter": parameter,
+                });
+            });
+        }
     </script>
 </body>
 </html>
