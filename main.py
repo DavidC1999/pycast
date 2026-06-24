@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import render_template, request
+from flask_app import app
 import sys
 import getpass
 
@@ -11,7 +12,6 @@ import subprocess
 from pycast import *
 
 profiles_dir = None
-app = Flask(__name__)
 platforms: list[Platform] = []
     
 def render_index():
