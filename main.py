@@ -13,15 +13,17 @@ from pycast import *
 
 profiles_dir = None
 platforms: list[Platform] = []
-    
+
+
 def render_index():
     launch_buttons = []
     for platform in platforms:
         if not platform.launch_buttons:
             continue
         for button in platform.launch_buttons:
-            launch_buttons.append({"platform": platform.id, "icon": button[0], "parameter": button[1]})
-    
+            launch_buttons.append(
+                {"platform": platform.id, "icon": button[0], "parameter": button[1]})
+
     return render_template("index.html", active_control=session() is not None, launch_buttons=launch_buttons)
 
 
@@ -33,19 +35,21 @@ def render_platform():
 
 def launch(platform, params):
     close_session()
-    
+
     open_session(platform, profiles_dir)
     session().active_platform.launch(params)
 
     return render_platform()
 
+
 def launch_immediate(platform, parameter):
     close_session()
-    
+
     open_session(platform, profiles_dir)
     session().active_platform.launch_immediate(parameter)
 
     return render_platform()
+
 
 def get_possible_urls_to_check():
     to_check = []
@@ -55,27 +59,29 @@ def get_possible_urls_to_check():
         to_check.append(request.args["description"])
     if "name" in request.args:
         to_check.append(request.args["name"])
-    
+
     for i, item in enumerate(to_check):
         to_check[i] = urllib.parse.unquote(item)
 
     return to_check
+
 
 @app.route("/launch")
 def route_launch():
     global platforms
 
     to_check = get_possible_urls_to_check()
-    
+
     if len(to_check) == 0:
         return render_index()
-    
+
     for possible_url in to_check:
         for platform in platforms:
             vars = platform.check_url(possible_url)
             if vars is not None:
                 return launch(platform, vars)
     return render_index()
+
 
 @app.route("/launch-immediate")
 def route_launch_immediate():
@@ -87,13 +93,14 @@ def route_launch_immediate():
 
     return render_index()
 
+
 @app.route("/")
 def index():
     to_check = get_possible_urls_to_check()
-    
+
     if len(to_check) == 0:
         return render_index()
-    
+
     # We should also get the profile from local storage
     # The get_profile page will redirect to /launch
     return render_template("get_profile.html")
@@ -104,10 +111,10 @@ def route_action(action_name=None):
     action = Action.str_to_int(action_name)
     if action is None:
         return render_platform()
-    
+
     if action not in session().active_platform.actions:
         return render_platform()
-    
+
     session().active_platform.actions[action]()
     return render_platform()
 
@@ -122,12 +129,15 @@ def route_close():
 def route_active_control():
     return session().render_active_control()
 
+
 def ensure_default_profile():
     if os.path.exists(DEFAULT_PROFILE_DIR):
         return
-    cmd = subprocess.Popen(["firefox", "-CreateProfile", f"{DEFAULT_PROFILE_NAME} {DEFAULT_PROFILE_DIR}"])
+    cmd = subprocess.Popen(
+        ["firefox", "-CreateProfile", f"{DEFAULT_PROFILE_NAME} {DEFAULT_PROFILE_DIR}"])
     # waits for command to exit to make sure the profile exists before returning from function
     cmd.communicate()
+
 
 if __name__ == "__main__":
     ensure_default_profile()

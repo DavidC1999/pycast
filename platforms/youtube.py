@@ -2,6 +2,7 @@ from pycast import *
 from browser_control.youtube_iframe import *
 from urllib.parse import urlparse, parse_qs
 
+
 class Youtube(Platform):
     def __init__(self):
         super().__init__(
@@ -12,7 +13,8 @@ class Youtube(Platform):
                 (Action.fullscreen, lambda: self._toggle_fullscreen_action()),
                 (Action.bback, lambda: send_command("seek", {"seconds": -10})),
                 (Action.back, lambda: send_command("seek", {"seconds": -5})),
-                (Action.fforward, lambda: send_command("seek", {"seconds": 10})),
+                (Action.fforward, lambda: send_command(
+                    "seek", {"seconds": 10})),
                 (Action.forward, lambda: send_command("seek", {"seconds": 5})),
                 (Action.refresh, lambda: send_command("reload")),
                 (Action.captions, lambda: send_command("toggleCaptions")),
@@ -26,13 +28,13 @@ class Youtube(Platform):
         seconds = int(get_url_arg('s')) if get_url_arg('s') else 0
         total_seconds = minutes * 60 + seconds
         send_command("jump", {"seconds": total_seconds})
-    
+
     def _toggle_fullscreen_action(self):
         status = get_status()
 
         if status is None:
             return
-        
+
         cleanup()  # Close the current video and reset state
         open_video(
             session().user_args,
@@ -55,6 +57,7 @@ class Youtube(Platform):
 
     def cleanup(self):
         cleanup()
+
 
 def create():
     return [Youtube()]

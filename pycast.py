@@ -6,6 +6,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DEFAULT_PROFILE_DIR = f"{SCRIPT_DIR}/firefox_profile"
 DEFAULT_PROFILE_NAME = "pycast"
 
+
 class Action:
     toggleplay = 0
     fullscreen = 1
@@ -20,7 +21,7 @@ class Action:
     @staticmethod
     def action_names():
         return [x for x in vars(Action) if not x.startswith("_") and not callable(getattr(Action, x))]
-    
+
     @staticmethod
     def action_values():
         return [getattr(Action, x) for x in Action.action_names()]
@@ -28,7 +29,7 @@ class Action:
     @staticmethod
     def count():
         return len(Action.action_names())
-    
+
     @staticmethod
     def is_action(value):
         return value in Action.action_names() or value in Action.action_values()
@@ -38,13 +39,13 @@ class Action:
         if not Action.is_action(text):
             return None
         return getattr(Action, text)
-    
+
     @staticmethod
     def int_to_str(nr):
         for action_name in Action.action_names():
             if Action.str_to_int(action_name) == nr:
                 return action_name
-        
+
         return None
 
 
@@ -62,31 +63,31 @@ class Platform:
         if regex is None:
             self.regexes = []
         elif isinstance(regex,
-        list):
+                        list):
             self.regexes = [re.compile(x, re.MULTILINE) for x in regex]
         else:
             self.regexes = [re.compile(regex, re.MULTILINE)]
-        
+
         self.actions = {}
 
         for action in actions:
             if not isinstance(action, tuple):
                 raise Exception("action must be a tuple")
-            
+
             if not isinstance(action[0], int) or action[0] >= Action.count():
                 raise Exception("invalid action")
-            
+
             if not callable(action[1]):
                 raise Exception("action must be callable")
-            
+
             self.actions[action[0]] = action[1]
-        
+
         self.launch_buttons = launch_buttons
-    
+
     def launch_immediate(self, parameter):
         _ = parameter
         raise NotImplementedError()
-    
+
     def launch(self, params: dict[str, str]):
         _ = params
         raise NotImplementedError()
@@ -99,13 +100,14 @@ class Platform:
             # Python seems to struggle with matching text with newlines:
             text = text.replace("\n", "")
             text = text.replace("\r", "")
-            
+
             matches = regex.match(text)
 
             if matches is not None:
                 return matches.groupdict()
-        
+
         return None
+
 
 class Session:
     driver = None
@@ -113,23 +115,27 @@ class Session:
     render_active_control: callable = None
     profile: str
     active_platform: Platform = None
-    
+
     user_args = None
 
     def render_control(self, render_control: callable):
         self.render_active_control = render_control
         return render_control()
 
+
 _session: Session = None
+
 
 def session():
     global _session
     return _session
 
+
 def cleanup():
     global _session
     if _session is not None and _session.active_platform is not None:
         _session.active_platform.cleanup()
+
 
 def close_session():
     global _session
@@ -137,14 +143,16 @@ def close_session():
         cleanup()
         _session = None
 
+
 def open_session(platform: Platform, profiles_dir):
     global _session
     if _session is not None:
         close_session()
-    
+
     _session = Session()
 
-    profile = request.args.get("profile") if "profile" in request.args else DEFAULT_PROFILE_NAME
+    profile = request.args.get(
+        "profile") if "profile" in request.args else DEFAULT_PROFILE_NAME
 
     profile_dir = DEFAULT_PROFILE_DIR
     dir_items = os.listdir(profiles_dir)
