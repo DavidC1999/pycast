@@ -1,11 +1,5 @@
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver import Keys, ActionChains
-from selenium.webdriver.firefox.service import Service
 import os
-
 from flask import request
-
 import re
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -97,6 +91,9 @@ class Platform:
         _ = params
         raise NotImplementedError()
 
+    def cleanup(self):
+        raise NotImplementedError()
+
     def check_url(self, text: str) -> dict[str, str] | None:
         for regex in self.regexes:
             # Python seems to struggle with matching text with newlines:
@@ -111,8 +108,8 @@ class Platform:
         return None
 
 class Session:
-    driver: webdriver.Firefox = None
-    driver_options: Options = None
+    driver = None
+    profile_dir = None
     render_active_control: callable = None
     profile: str
     active_platform: Platform = None
@@ -129,23 +126,15 @@ def session():
     global _session
     return _session
 
-def sendkey(key):
+def cleanup():
     global _session
-    ActionChains(_session.driver)\
-        .key_down(key)\
-        .key_up(key)\
-        .perform()
-
-def close_browser():
-    global _session
-    if _session.driver is not None:
-        _session.driver.quit()
-        _session.driver = None
+    if _session is not None and _session.active_platform is not None:
+        _session.active_platform.cleanup()
 
 def close_session():
     global _session
     if _session is not None:
-        close_browser()
+        cleanup()
         _session = None
 
 def open_session(platform: Platform, profiles_dir):
@@ -164,24 +153,9 @@ def open_session(platform: Platform, profiles_dir):
             profile_dir = f"{profiles_dir}/{item}"
             break
 
-    _session.driver_options = Options()
-    _session.driver_options.add_argument("-profile")
-    _session.driver_options.add_argument(f"{profile_dir}")
+    _session.profile_dir = profile_dir
     _session.active_platform = platform
 
-
-def open_browser(url):
-    global _session
-
-    close_browser()
-
-    _session.driver = webdriver.Firefox(
-        service=Service(f"{SCRIPT_DIR}/thirdparty/geckodriver"),
-        options=_session.driver_options
-    )
-
-    _session.driver.get(url)
-    _session.driver.maximize_window()
 
 def get_url_arg(name):
     return request.args.get(name)

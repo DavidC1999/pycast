@@ -1,4 +1,7 @@
 from pycast import *
+from browser_control.selenium import *
+
+from selenium.webdriver import Keys
 
 class Youtube(Platform):
     def __init__(self):
@@ -30,6 +33,9 @@ class Youtube(Platform):
     def launch(self, params: dict[str, str]):
         session().user_args = params["id"]
         open_browser(params["url"])
+
+    def cleanup(self):
+        close_browser()
 
 def create():
     return [Youtube()]

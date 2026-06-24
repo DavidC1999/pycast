@@ -1,8 +1,10 @@
 from pycast import *
+from browser_control.selenium import *
 
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located, visibility_of_element_located
 from selenium.webdriver.common.by import By
+from selenium.webdriver import Keys, ActionChains
 
 from platforms.assets.npo_icons import *
 
@@ -57,7 +59,7 @@ class Npo(Platform):
     def _show_seek_bar(self):
         """Get the seek bar to show by moving the mouse"""
         player_elem = session().driver.find_element(By.CLASS_NAME, "bitmovinplayer-container")
-        action = webdriver.ActionChains(session().driver)
+        action = ActionChains(session().driver)
         action.move_to_element(player_elem)
         action.move_by_offset(10, 0)
         action.perform()
@@ -68,7 +70,7 @@ class Npo(Platform):
     def _hide_seek_bar(self):
         """Hide the seek bar by moving the mouse to the middle and keeping it still"""
         player_elem = session().driver.find_element(By.CLASS_NAME, "bitmovinplayer-container")
-        action = webdriver.ActionChains(session().driver)
+        action = ActionChains(session().driver)
         action.move_to_element(player_elem)
         action.perform()
     
@@ -108,7 +110,7 @@ class Npo(Platform):
         self._show_seek_bar()
 
         # Click at the correct location to jump to the specified time:
-        action = webdriver.ActionChains(session().driver)
+        action = ActionChains(session().driver)
         action.move_to_element(seek_bar_elem)
         action.move_by_offset(target_click, 0)
         action.click()
@@ -122,7 +124,9 @@ class Npo(Platform):
 
     def launch(self, params: dict[str, str]):
         open_browser(params["url"])
-        self._focus_player()
+
+    def cleanup(self):
+        close_browser()
 
 def create():
     return [Npo("share"), Npo("immediate")]
