@@ -1,0 +1,3 @@
+[submodule "davids-ydotool"]
+	path = ydotool
+	url = https://github.com/DavidC1999/ydotool.git

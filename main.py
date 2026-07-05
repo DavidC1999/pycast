@@ -1,5 +1,5 @@
+from flask import Flask
 from flask import render_template, request
-from flask_app import app
 import sys
 import getpass
 
@@ -14,6 +14,8 @@ from pycast import *
 profiles_dir = None
 platforms: list[Platform] = []
 
+
+app = Flask("pycast")
 
 def render_index():
     launch_buttons = []
