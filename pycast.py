@@ -118,10 +118,6 @@ class Session:
 
     user_args = None
 
-    def render_control(self, render_control: callable):
-        self.render_active_control = render_control
-        return render_control()
-
 
 _session: Session = None
 

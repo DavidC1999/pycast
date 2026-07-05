@@ -17,6 +17,7 @@ platforms: list[Platform] = []
 
 app = Flask("pycast")
 
+
 def render_index():
     launch_buttons = []
     for platform in platforms:
@@ -32,7 +33,10 @@ def render_index():
 def render_platform():
     platform = session().active_platform
     actions = [Action.int_to_str(key) for key in platform.actions.keys()]
-    return render_template("controls.html", platform_name=platform.name, actions=actions)
+
+    # Store the callback to render the active control in the session so that it can be called from the /active-control route
+    session().render_active_control = lambda: render_template("controls.html", platform_name=platform.name, actions=actions)
+    return session().render_active_control()
 
 
 def launch(platform, params):
@@ -129,6 +133,8 @@ def route_close():
 
 @app.route("/active-control")
 def route_active_control():
+    if session() is None or session().render_active_control is None:
+        return render_index()
     return session().render_active_control()
 
 
