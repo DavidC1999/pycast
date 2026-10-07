@@ -1,0 +1,16 @@
+{
+  "policies": {
+    "Preferences": {
+      "xpinstall.signatures.required": {
+        "Value": false,
+        "Status": "locked"
+      }
+    },
+    "ExtensionSettings": {
+      "pycast-video-control@pycast.local": {
+        "installation_mode": "normal_installed",
+        "install_url": "file:///@PWD@/firefox_addon.xpi"
+      }
+    }
+  }
+}
