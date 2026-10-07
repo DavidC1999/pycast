@@ -1,5 +1,6 @@
 from pycast import *
-from browser_control.ydotool import *
+from browser_control import ydotool, browser
+
 from urllib.parse import urlparse, parse_qs
 
 from pydotool import KEY_K, KEY_F, KEY_LEFT, KEY_RIGHT, KEY_J, KEY_L, KEY_F5, KEY_C
@@ -11,14 +12,14 @@ class Youtube(Platform):
             name="YouTube",
             id="youtube",
             actions=[
-                (Action.toggleplay, lambda: sendkey(KEY_K)),
-                (Action.fullscreen, lambda: sendkey(KEY_F)),
-                (Action.bback, lambda: sendkey(KEY_J)),
-                (Action.back, lambda:sendkey(KEY_LEFT)),
-                (Action.fforward, lambda: sendkey(KEY_L)),
-                (Action.forward, lambda: sendkey(KEY_RIGHT)),
-                (Action.refresh, lambda: sendkey(KEY_F5)),
-                (Action.captions, lambda: sendkey(KEY_C)),
+                (Action.toggleplay, lambda: ydotool.sendkey(KEY_K)),
+                (Action.fullscreen, lambda: ydotool.sendkey(KEY_F)),
+                (Action.bback, lambda: ydotool.sendkey(KEY_J)),
+                (Action.back, lambda:ydotool.sendkey(KEY_LEFT)),
+                (Action.fforward, lambda: ydotool.sendkey(KEY_L)),
+                (Action.forward, lambda: ydotool.sendkey(KEY_RIGHT)),
+                (Action.refresh, lambda: ydotool.sendkey(KEY_F5)),
+                (Action.captions, lambda: ydotool.sendkey(KEY_C)),
                 (Action.jump, lambda: self._jump_action()),
             ],
             regex=r".*?(?P<url>(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=(?P<id>[^?&#]+).*)",
@@ -30,13 +31,13 @@ class Youtube(Platform):
             url += f"&t={start_at}s"
 
         print(f"Opening YouTube video: {url}")
-        open_browser(url)
+        browser.open(url)
 
     def _jump_action(self):
         minutes = int(get_url_arg('m')) if get_url_arg('m') else 0
         seconds = int(get_url_arg('s')) if get_url_arg('s') else 0
         total_seconds = minutes * 60 + seconds
-        close_browser()
+        browser.close()
         self._open_video(session().user_args, start_at=total_seconds)
 
     def launch(self, params: dict[str, str]):
@@ -52,7 +53,7 @@ class Youtube(Platform):
         self._open_video(params["id"], start_at)
 
     def cleanup(self):
-        close_browser()
+        browser.close()
 
 
 def create():

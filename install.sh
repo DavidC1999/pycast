@@ -88,6 +88,45 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 
+
+echo "Packaging firefox addon..."
+pushd .
+cd firefox_addon
+zip -r ../firefox_addon.xpi *
+popd
+
+echo Creating firefox policies file locally...
+sed -e "s|@PWD@|$(pwd)|g" \
+    policies.json.template > policies.json
+
+sudo mkdir -p /etc/firefox/policies
+
+copy_policies=true
+
+if [ -f "/etc/firefox/policies/policies.json" ]
+then
+    if cmp -s policies.json /etc/firefox/policies/policies.json; then
+        echo "policies.json is already up to date in /etc/firefox"
+        copy_policies=false
+    else
+        echo "policies.json already exists in /etc/firefox"
+        read -p "Do you wish to overwrite it? [yn]" yn
+        case $yn in
+            [Yy]* )
+                copy_policies=true
+                ;;
+            * ) copy_policies=false
+                ;;
+        esac
+    fi
+fi
+
+if [ "$copy_policies" = true ]; then
+    echo "Copying policies.json to /etc/firefox"
+    sudo rm -f /etc/firefox/policies/policies.json
+    sudo cp policies.json /etc/firefox/policies/policies.json
+fi
+
 read -p "Do you wish to start PyCast as a systemd daemon? [yn]" yn
 case $yn in
     [Yy]* ) ;;

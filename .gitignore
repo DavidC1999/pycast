@@ -2,4 +2,6 @@ __pycache__
 .venv
 .vscode
 pycast.service
+policies.json
 firefox_profile
+firefox_addon.xpi
