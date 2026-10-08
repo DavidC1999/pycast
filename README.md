@@ -12,6 +12,7 @@ PyCast gives you a cast-like way to start and control online video on a media PC
 ## Supported Platforms
 
 - YouTube videos
+- Dropout.tv
 - NPO (Dutch public broadcaster) video links
 - NPO 1, 2, and 3 livestreams 
 
